@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "140124232414",
+    "project_id": "impeccable-home-a9123",
+    "storage_bucket": "impeccable-home-a9123.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:140124232414:android:d4553feaed2753566f004f",
+        "android_client_info": {
+          "package_name": "com.example.impeccablehome_customer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "140124232414-nio245jtoeskdigdfbod9c2kqsh7itoe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.impeccablehome_customer",
+            "certificate_hash": "d202e94f42b3b7c0b10e6293c9b87f9d8806cc42"
+          }
+        },
+        {
+          "client_id": "140124232414-vkv6b9otgld5fm5bshkitq27fi98p7sa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvDa-DXiAfCHOS4iaJkVuJ7RVqHh5g97c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "140124232414-vkv6b9otgld5fm5bshkitq27fi98p7sa.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "140124232414-6v158vqau1s8o82t5p2r679bjmnc97pu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.impeccablehomeCustomer"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
