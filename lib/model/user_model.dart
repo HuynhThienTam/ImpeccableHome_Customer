@@ -7,6 +7,9 @@ class UserModel{
   String createdAt;
   String phoneNumber;
   String uid;
+  String passWord;
+  String lastLogOutAt;
+  String status;//onl,off
   UserModel({
     required this.name,
     required this.email,
@@ -15,6 +18,9 @@ class UserModel{
     required this.createdAt,
     required this.phoneNumber,
     required this.uid,
+    required this.passWord,
+    required this.lastLogOutAt,
+    required this.status,
   });
   
   factory UserModel.fromMap(Map<String,dynamic>map){
@@ -26,6 +32,9 @@ class UserModel{
       createdAt: map['createdAt']??'', 
       phoneNumber: map['phoneNumber']??'', 
       uid: map['uid']??'',
+      passWord: map['passWord']??'',
+      lastLogOutAt: map['lastLogOutAt']??'',
+      status: map['status']??'',
       );
   }
 
@@ -38,6 +47,9 @@ class UserModel{
       "profilePic":profilePic,
       "phoneNumber":phoneNumber,
       "createdAt": createdAt,
+      "passWord":passWord,
+      "lastLogOutAt":lastLogOutAt,
+      "status":status,
     };
   }
 }

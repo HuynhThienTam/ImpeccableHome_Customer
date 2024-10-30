@@ -4,10 +4,16 @@ import "package:impeccablehome_customer/components/custom_button.dart";
 import "package:impeccablehome_customer/components/custom_text_input.dart";
 import "package:impeccablehome_customer/components/login_header_widget.dart";
 import 'package:country_picker/country_picker.dart';
+import "package:impeccablehome_customer/resources/authentication_method.dart";
+import "package:impeccablehome_customer/resources/cloud_firestore_methods.dart";
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 import 'package:flutter/gestures.dart';
+import "package:impeccablehome_customer/utils/utils.dart";
+import "package:provider/provider.dart";
+
 class LogInScreen extends StatefulWidget {
-  const LogInScreen({super.key});
+  final Function()? goToSignUpScreen;
+  const LogInScreen({super.key, required this.goToSignUpScreen});
 
   @override
   State<LogInScreen> createState() => _LogInScreenState();
@@ -28,7 +34,8 @@ class _LogInScreenState extends State<LogInScreen> {
       displayName: "Vietnam",
       displayNameNoCountryCode: "VN",
       e164Key: "",
-    ),);
+    ),
+  );
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,32 +47,34 @@ class _LogInScreenState extends State<LogInScreen> {
           children: [
             LoginHeaderWidget(
               iconImage: Image.asset(
-                              "assets/icons/clean_home_icon.png",
-                              height: 75,
-                            ), 
-              title: "  Log in", 
+                "assets/icons/clean_home_icon.png",
+                height: 75,
+              ),
+              title: "  Log in",
               briefDescription: TextSpan(
-                      text: "Welcome back!\nDon’t have an account? ",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white, 
-                        height: 1.5,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: "Sign up",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: orangeColor, 
-                            decoration: TextDecoration.underline, 
-                            height: 1.5,
-                          ),
-                          recognizer: TapGestureRecognizer()..onTap = () {},
-                        ),
-                      ],
-                    ),),
+                text: "Welcome back!\nDon’t have an account? ",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
+                  height: 1.5,
+                ),
+                children: [
+                  TextSpan(
+                    text: "Sign up",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: orangeColor,
+                      decoration: TextDecoration.underline,
+                      height: 1.5,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = widget.goToSignUpScreen,
+                  ),
+                ],
+              ),
+            ),
             Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: MediaQuery.of(context).size.width * (2 / 15),
@@ -100,12 +109,16 @@ class _LogInScreenState extends State<LogInScreen> {
                   SizedBox(
                     height: 25,
                   ),
-                  ClickableText(text: "Forgot you password?", isLink: true, onTap: (){}),
+                  ClickableText(
+                      text: "Forgot you password?", isLink: true, onTap: () {}),
                   SizedBox(
                     height: 30,
                   ),
-                  CustomButton(title: "Log in", onTap: (){}),
-                    SizedBox(
+                  CustomButton(
+                      title: "Log in",
+                      onTap: () {signIn();
+                      }),
+                  SizedBox(
                     height: 85,
                   ),
                 ],
@@ -115,5 +128,11 @@ class _LogInScreenState extends State<LogInScreen> {
         ),
       )),
     );
+  }
+  void signIn(){
+    final authMethods= Provider.of<AuthenticationMethods>(context,listen: false);
+    String phoneNumber=phoneController.text.trim();
+    String passWord=passwordController.text.trim();
+    authMethods.signIn(context: context, phoneNumber: "+${selectedCountryNotifier.value.phoneCode}$phoneNumber", passWord: passWord);
   }
 }

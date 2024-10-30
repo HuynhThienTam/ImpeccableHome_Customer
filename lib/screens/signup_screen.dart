@@ -3,10 +3,15 @@ import "package:impeccablehome_customer/components/custom_button.dart";
 import "package:impeccablehome_customer/components/custom_text_input.dart";
 import "package:impeccablehome_customer/components/login_header_widget.dart";
 import 'package:country_picker/country_picker.dart';
+import "package:impeccablehome_customer/resources/authentication_method.dart";
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 import 'package:flutter/gestures.dart';
+import "package:impeccablehome_customer/utils/utils.dart";
+import "package:provider/provider.dart";
+
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+  final Function()? goToLogInScreen;
+  const SignUpScreen({super.key, required this.goToLogInScreen});
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -15,7 +20,8 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final ValueNotifier<Country> selectedCountryNotifier = ValueNotifier<Country>(
     Country(
@@ -29,7 +35,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       displayName: "Vietnam",
       displayNameNoCountryCode: "VN",
       e164Key: "",
-    ),);
+    ),
+  );
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,32 +48,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
           children: [
             LoginHeaderWidget(
               iconImage: Image.asset(
-                              "assets/icons/clean_home_icon.png",
-                              height: 75,
-                            ), 
-              title: "Sign up", 
+                "assets/icons/clean_home_icon.png",
+                height: 75,
+              ),
+              title: "Sign up",
               briefDescription: TextSpan(
-                      text: "Create an account!\nAlready have an account? ",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white, 
-                        height: 1.5,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: "Log in",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: orangeColor, 
-                            decoration: TextDecoration.underline, 
-                            height: 1.5,
-                          ),
-                          recognizer: TapGestureRecognizer()..onTap = () {},
-                        ),
-                      ],
-                    ),),
+                text: "Create an account!\nAlready have an account? ",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
+                  height: 1.5,
+                ),
+                children: [
+                  TextSpan(
+                    text: "Log in",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: orangeColor,
+                      decoration: TextDecoration.underline,
+                      height: 1.5,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = widget.goToLogInScreen,
+                  ),
+                ],
+              ),
+            ),
             Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: MediaQuery.of(context).size.width * (2 / 15),
@@ -125,8 +134,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   SizedBox(
                     height: 30,
                   ),
-                  CustomButton(title: "Sign up", onTap: (){}),
-                    SizedBox(
+                  CustomButton(
+                      title: "Sign up",
+                      onTap: () {
+                        sendPhoneNumber();
+                      }),
+                  SizedBox(
                     height: 85,
                   ),
                 ],
@@ -136,5 +149,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       )),
     );
+  }
+
+  Future<void> sendPhoneNumber() async {
+    final authMethods =
+        Provider.of<AuthenticationMethods>(context, listen: false);
+    String phoneNumber = phoneController.text.trim();
+    String passWord = passwordController.text.trim();
+    String confirmPassWord = confirmPasswordController.text.trim();
+    String userName = nameController.text.trim();
+    bool isUsed = await authMethods.isPhoneNumberUsed("+${selectedCountryNotifier.value.phoneCode}$phoneNumber");
+    if (isUsed) {
+      showSnackBar(context, "Phone number is already used.");
+    } else {
+      print("Phone number is available.");
+      if (passWord == confirmPassWord) {
+      authMethods.verifyPhoneNumberForRegister(
+        context,
+        "+${selectedCountryNotifier.value.phoneCode}$phoneNumber",
+        userName,
+        passWord,
+      );
+    } else {
+      showSnackBar(context, "Passwords do not match");
+    }
+    }
+    
   }
 }
