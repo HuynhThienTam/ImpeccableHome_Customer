@@ -30,35 +30,3 @@ class AuthGate extends StatelessWidget {
     );
   }
 }
-
-// class CheckUserDetailsClass extends StatefulWidget {
-//   CheckUserDetailsClass({
-//     super.key,
-//   });
-
-//   @override
-//   State<CheckUserDetailsClass> createState() => _CheckUserDetailsPageState();
-// }
-
-// class _CheckUserDetailsPageState extends State<CheckUserDetailsClass> {
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return StreamBuilder(
-//         stream: CloudFirestoreClass()
-//             .firebaseFirestore
-//             .collection("users")
-//             .doc(CloudFirestoreClass().firebaseAuth.currentUser!.uid)
-//             .snapshots(),
-//         builder: (context, snapshot) {
-//           if (!snapshot.hasData) {
-//             return CircularProgressIndicator();
-//           }
-//           else if (snapshot.data!.exists) {
-//             return HomeScreen();
-//           } else {
-//             return AddUserDetailScreen();
-//           }
-//         });
-//   }
-// }

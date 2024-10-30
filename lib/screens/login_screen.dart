@@ -6,6 +6,7 @@ import "package:impeccablehome_customer/components/login_header_widget.dart";
 import 'package:country_picker/country_picker.dart';
 import "package:impeccablehome_customer/resources/authentication_method.dart";
 import "package:impeccablehome_customer/resources/cloud_firestore_methods.dart";
+import "package:impeccablehome_customer/screens/reset_password_screen.dart";
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 import 'package:flutter/gestures.dart';
 import "package:impeccablehome_customer/utils/utils.dart";
@@ -110,13 +111,22 @@ class _LogInScreenState extends State<LogInScreen> {
                     height: 25,
                   ),
                   ClickableText(
-                      text: "Forgot you password?", isLink: true, onTap: () {}),
+                      text: "Forgot you password?",
+                      isLink: true,
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ResetPasswordScreen()),
+                          );
+                      }),
                   SizedBox(
                     height: 30,
                   ),
                   CustomButton(
                       title: "Log in",
-                      onTap: () {signIn();
+                      onTap: () {
+                        signIn();
                       }),
                   SizedBox(
                     height: 85,
@@ -129,10 +139,15 @@ class _LogInScreenState extends State<LogInScreen> {
       )),
     );
   }
-  void signIn(){
-    final authMethods= Provider.of<AuthenticationMethods>(context,listen: false);
-    String phoneNumber=phoneController.text.trim();
-    String passWord=passwordController.text.trim();
-    authMethods.signIn(context: context, phoneNumber: "+${selectedCountryNotifier.value.phoneCode}$phoneNumber", passWord: passWord);
+
+  void signIn() {
+    final authMethods =
+        Provider.of<AuthenticationMethods>(context, listen: false);
+    String phoneNumber = phoneController.text.trim();
+    String passWord = passwordController.text.trim();
+    authMethods.signIn(
+        context: context,
+        phoneNumber: "+${selectedCountryNotifier.value.phoneCode}$phoneNumber",
+        passWord: passWord);
   }
 }

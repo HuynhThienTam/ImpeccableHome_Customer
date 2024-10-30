@@ -14,12 +14,11 @@ import 'package:impeccablehome_customer/screens/verify_screen.dart';
 import 'package:impeccablehome_customer/utils/utils.dart';
 
 class AuthenticationMethods extends ChangeNotifier {
-  // bool _isLoading = false;
-  // bool get isLoading => _isLoading;
   UserModel? _userModel;
   UserModel get userModel => _userModel!;
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   CloudFirestoreClass cloudFirestoreClass = CloudFirestoreClass();
+  Duration timeoutDuration = const Duration(seconds: 60);
   void verifyPhoneNumberForRegister(
     BuildContext context,
     String phoneNumber,
@@ -29,6 +28,7 @@ class AuthenticationMethods extends ChangeNotifier {
     try {
       await firebaseAuth.verifyPhoneNumber(
           phoneNumber: phoneNumber,
+          timeout: timeoutDuration,
           verificationCompleted:
               (PhoneAuthCredential phoneAuthCredential) async {
             await firebaseAuth.signInWithCredential(phoneAuthCredential);
@@ -69,15 +69,10 @@ class AuthenticationMethods extends ChangeNotifier {
     required String userOtp,
     required Function onSuccess,
   }) async {
-    // _isLoading = true;
-    // notifyListeners();
-
     try {
       PhoneAuthCredential creds = PhoneAuthProvider.credential(
           verificationId: verificationId, smsCode: userOtp);
       final userCred = await firebaseAuth.signInWithCredential(creds);
-      // _uid=userCred.user?.uid;
-      // Save phone and password in Firestore after phone number verification
       userModel.uid = userCred.user!.uid;
       userModel.status = "onl";
       userModel.createdAt = DateTime.now().millisecondsSinceEpoch.toString();
@@ -90,11 +85,8 @@ class AuthenticationMethods extends ChangeNotifier {
           context,
           MaterialPageRoute(builder: (context) => const HomeScreen()),
           (route) => false);
-      // _isLoading = false;
-      // notifyListeners();
     } on FirebaseAuthException catch (e) {
       showSnackBar(context, e.message.toString());
-      // notifyListeners();
     }
   }
 
@@ -130,9 +122,6 @@ class AuthenticationMethods extends ChangeNotifier {
     // Check password
     final userDoc = query.docs.first;
     if (userDoc['passWord'] == passWord) {
-      // showSnackBar(context, "User signed in successfully!");
-      // Sign in user manually with Firebase auth
-      //await firebaseAuth.signInWithCustomToken(userDoc.id);
       signInWithPhone(context, phoneNumber);
     } else {
       showSnackBar(context, "Incorrect password");
@@ -142,6 +131,7 @@ class AuthenticationMethods extends ChangeNotifier {
   void signInWithPhone(BuildContext context, String phoneNumber) async {
     await firebaseAuth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
+      timeout: timeoutDuration,
       verificationCompleted: (PhoneAuthCredential credential) async {
         // Auto-signs the user in with the provided credential
         await firebaseAuth.signInWithCredential(credential);
@@ -176,7 +166,6 @@ class AuthenticationMethods extends ChangeNotifier {
           .doc(firebaseAuth.currentUser!.uid)
           .update({
         'status': 'onl',
-        'lastLogOutAt': '',
       });
       Navigator.pushAndRemoveUntil(
           context,

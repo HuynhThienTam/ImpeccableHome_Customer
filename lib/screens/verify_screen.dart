@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:flutter/material.dart";
 import "package:impeccablehome_customer/components/clickable_text.dart";
 import "package:impeccablehome_customer/components/custom_button.dart";
@@ -19,6 +21,30 @@ class VerifyScreen extends StatefulWidget {
 
 class _VerifyScreenState extends State<VerifyScreen> {
   String? otpCode;
+  int _remainingTime = 59;
+  Timer? _timer;
+  void _startCountdown() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_remainingTime > 0) {
+          _remainingTime--;
+        } else {
+          timer.cancel();
+        }
+      });
+    });
+  }
+    @override
+  void initState() {
+    super.initState();
+    _startCountdown();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,7 +108,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                     children: [
                       ClickableText(text: "Resend your code", onTap: () {}),
                       Expanded(child: Container()),
-                      ClickableText(text: "Expire after 23s", onTap: () {}),
+                      ClickableText(text: "Expire after ${_remainingTime}s", onTap: () {}),
                     ],
                   ),
                   SizedBox(

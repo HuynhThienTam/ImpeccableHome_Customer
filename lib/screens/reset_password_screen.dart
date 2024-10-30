@@ -4,6 +4,7 @@ import "package:impeccablehome_customer/components/custom_button.dart";
 import "package:impeccablehome_customer/components/custom_text_input.dart";
 import 'package:country_picker/country_picker.dart';
 import "package:impeccablehome_customer/components/small_text.dart";
+import "package:impeccablehome_customer/screens/create_password_screen.dart";
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -62,7 +63,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       SmallText(
                           text:
                               "Please enter your number. We will send a \ncode to your phone to reset your password."),
-                       SizedBox(
+                      SizedBox(
                         height: 50,
                       ),
                     ],
@@ -88,7 +89,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       SizedBox(
                         height: 30,
                       ),
-                      CustomButton(title: "Send my code", onTap: () {}),
+                      CustomButton(
+                          title: "Send my code",
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => CreatePasswordScreen()),
+                               );
+                          }),
                       SizedBox(
                         height: 85,
                       ),
