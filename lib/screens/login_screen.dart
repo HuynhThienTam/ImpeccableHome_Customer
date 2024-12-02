@@ -115,10 +115,10 @@ class _LogInScreenState extends State<LogInScreen> {
                       isLink: true,
                       onTap: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ResetPasswordScreen()),
-                          );
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ResetPasswordScreen()),
+                        );
                       }),
                   SizedBox(
                     height: 30,
@@ -145,9 +145,16 @@ class _LogInScreenState extends State<LogInScreen> {
         Provider.of<AuthenticationMethods>(context, listen: false);
     String phoneNumber = phoneController.text.trim();
     String passWord = passwordController.text.trim();
-    authMethods.signIn(
-        context: context,
-        phoneNumber: "+${selectedCountryNotifier.value.phoneCode}$phoneNumber",
-        passWord: passWord);
+    if (phoneNumber == "") {
+      showSnackBar(context, "Enter phone number!");
+    } else if (passWord == "") {
+      showSnackBar(context, "Enter fill in password!");
+    } else {
+      authMethods.signIn(
+          context: context,
+          phoneNumber:
+              "+${selectedCountryNotifier.value.phoneCode}$phoneNumber",
+          passWord: passWord);
+    }
   }
 }

@@ -102,17 +102,20 @@ class AuthenticationMethods extends ChangeNotifier {
     await firebaseAuth.signOut();
   }
 
-  void signIn({
-    required BuildContext context,
-    required String phoneNumber,
-    required String passWord,
-  }) async {
+void signIn({
+  required BuildContext context,
+  required String phoneNumber,
+  required String passWord,
+}) async {
+  try {
     // Search for user by phone number
     final query = await CloudFirestoreClass()
         .firebaseFirestore
         .collection('users')
         .where('phoneNumber', isEqualTo: phoneNumber)
         .get();
+
+    if (!context.mounted) return; // Ensure context is still valid
 
     if (query.docs.isEmpty) {
       showSnackBar(context, "User not found.");
@@ -122,11 +125,20 @@ class AuthenticationMethods extends ChangeNotifier {
     // Check password
     final userDoc = query.docs.first;
     if (userDoc['passWord'] == passWord) {
+      if (!context.mounted) return; // Double-check context before navigation
       signInWithPhone(context, phoneNumber);
     } else {
+      if (!context.mounted) return; // Check context before showing a snackbar
       showSnackBar(context, "Incorrect password");
     }
+  } catch (e) {
+    if (context.mounted) {
+      // showSnackBar(context, "An error occurred: $e");
+      debugPrint("An error occurred: $e"); // Logs the error to the terminal
+    }
   }
+}
+
 
   void signInWithPhone(BuildContext context, String phoneNumber) async {
     await firebaseAuth.verifyPhoneNumber(

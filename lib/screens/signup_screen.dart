@@ -159,7 +159,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
     String confirmPassWord = confirmPasswordController.text.trim();
     String userName = nameController.text.trim();
     bool isUsed = await authMethods.isPhoneNumberUsed("+${selectedCountryNotifier.value.phoneCode}$phoneNumber");
-    if (isUsed) {
+    if(userName==""){
+      showSnackBar(context, "Enter user name!");
+    }
+    else if(phoneNumber==""){
+      showSnackBar(context, "Enter phone number!");
+    }
+    else if(passWord==""){
+      showSnackBar(context, "Enter password!");
+    }
+    else if(confirmPassWord==""){
+      showSnackBar(context, "Retype password!");
+    }
+    else if (isUsed) {
       showSnackBar(context, "Phone number is already used.");
     } else {
       print("Phone number is available.");
