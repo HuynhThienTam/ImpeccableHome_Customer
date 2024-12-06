@@ -4,7 +4,7 @@ import 'package:country_picker/country_picker.dart';
 
 class CustomTextInput extends StatefulWidget {
   final String hintText;
-  final Image prefixImage; // Accepts an Image widget directly
+  final Image? prefixImage; // Accepts an Image widget directly
   final String title;
   final TextEditingController controller;
   final bool isPassword;
@@ -14,7 +14,7 @@ class CustomTextInput extends StatefulWidget {
   const CustomTextInput({
     Key? key,
     required this.hintText,
-    required this.prefixImage,
+    this.prefixImage = null,
     required this.title,
     required this.controller,
     this.isPassword = false,
@@ -73,7 +73,8 @@ class _CustomTextInputState extends State<CustomTextInput> {
         ),
         SizedBox(height: 15),
         TextField(
-          keyboardType: widget.isPhoneNumber? TextInputType.number:  TextInputType.text,
+          keyboardType:
+              widget.isPhoneNumber ? TextInputType.number : TextInputType.text,
           controller: widget.controller,
           obscureText: widget.isPassword && isHidden,
           decoration: InputDecoration(
@@ -120,10 +121,12 @@ class _CustomTextInputState extends State<CustomTextInput> {
                       ),
                     ),
                   )
-                : Container(
-                    margin: const EdgeInsets.only(right: 12),
-                    child: widget.prefixImage,
-                  ),
+                : (widget.prefixImage == null)
+                    ? null
+                    : Container(
+                        margin: const EdgeInsets.only(right: 12),
+                        child: widget.prefixImage,
+                      ),
             prefixIconConstraints: widget.isPhoneNumber
                 ? BoxConstraints(maxHeight: 18, maxWidth: 85)
                 : BoxConstraints(maxHeight: 17, maxWidth: 28),

@@ -9,6 +9,7 @@ import 'package:impeccablehome_customer/components/note_input.dart';
 import 'package:impeccablehome_customer/components/smallProcessWidget.dart';
 import 'package:impeccablehome_customer/model/helper_model.dart';
 import 'package:impeccablehome_customer/model/service_model.dart';
+import 'package:impeccablehome_customer/screens/step_two_booking_process_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 import 'package:impeccablehome_customer/utils/mock.dart';
 
@@ -404,7 +405,14 @@ class _StepOneBookingProcessScreenState
               width: 160,
               child: CustomButton(
                 title: "Next",
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => StepTwoBookingProcessScreen(),
+                          ),
+                        );
+                },
                 backgroundColor: neonGreenColor,
                 textColor: Colors.black,
               ),
