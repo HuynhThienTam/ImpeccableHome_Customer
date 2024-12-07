@@ -5,7 +5,7 @@ import 'package:impeccablehome_customer/components/carousel_widget.dart';
 import 'package:impeccablehome_customer/components/gradient_container.dart';
 import 'package:impeccablehome_customer/components/search_bar_widget.dart';
 import 'package:impeccablehome_customer/resources/authentication_method.dart';
-import 'package:impeccablehome_customer/screens/step_one_booking_process_screen.dart';
+import 'package:impeccablehome_customer/screens/booking_details_providing_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 import 'package:impeccablehome_customer/utils/mock.dart';
 
@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => StepOneBookingProcessScreen(service: service,),
+                            builder: (context) => BookingDetailsProvidingScreen(service: service,),
                           ),
                         );
                       },

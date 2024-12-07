@@ -1,4 +1,5 @@
-  import 'package:impeccablehome_customer/model/helper_model.dart';
+  import 'package:impeccablehome_customer/model/booking_model.dart';
+import 'package:impeccablehome_customer/model/helper_model.dart';
 import 'package:impeccablehome_customer/model/service_model.dart';
 
 final List<ServiceModel> services = [
@@ -190,5 +191,79 @@ final List<ServiceModel> services = [
     emergencyContactAddress: "303 Birch St",
     isApproved: "yes",
     ratings: 4.6,
+  ),
+];
+List<BookingModel> bookings = [
+  BookingModel(
+    bookingNumber: 'B001',
+    serviceType: 'Clean-up & Laundry',
+    customerUid: 'CUST001',
+    customerName: 'John Doe',
+    helperUid: 'HELP001',
+    helperName: 'Alice Helper',
+    workingDay: DateTime(2024, 12, 10),
+    startTime: DateTime(2024, 12, 10, 9, 0),
+    finishedTime: DateTime(2024, 12, 10, 12, 0),
+    location: '123 Main Street',
+    note: 'Handle delicate items with care',
+    paymentMethod: 'Credit Card',
+    cardName: 'John Doe',
+    cardNumber: '1234 5678 9876 5432',
+    cvv: '123',
+    status: '0', // Scheduled
+  ),
+  BookingModel(
+    bookingNumber: 'B002',
+    serviceType: 'Plumbing',
+    customerUid: 'CUST002',
+    customerName: 'Jane Smith',
+    helperUid: 'HELP002',
+    helperName: 'Bob Helper',
+    workingDay: DateTime(2024, 12, 11),
+    startTime: DateTime(2024, 12, 11, 14, 0),
+    finishedTime: DateTime(2024, 12, 11, 16, 30),
+    location: '456 Elm Avenue',
+    note: 'Fix leaking sink',
+    paymentMethod: 'Cash',
+    cardName: '',
+    cardNumber: '',
+    cvv: '',
+    status: '1', // In progress
+  ),
+  BookingModel(
+    bookingNumber: 'B003',
+    serviceType: 'Cooking',
+    customerUid: 'CUST003',
+    customerName: 'Emily Rose',
+    helperUid: 'HELP003',
+    helperName: 'Charlie Helper',
+    workingDay: DateTime(2024, 12, 12),
+    startTime: DateTime(2024, 12, 12, 17, 0),
+    finishedTime: DateTime(2024, 12, 12, 18, 30),
+    location: '789 Oak Lane',
+    note: 'Prepare vegetarian meals',
+    paymentMethod: 'Credit Card',
+    cardName: 'Emily Rose',
+    cardNumber: '9876 5432 1234 5678',
+    cvv: '456',
+    status: '2', // Completed
+  ),
+  BookingModel(
+    bookingNumber: 'B004',
+    serviceType: 'Electricity',
+    customerUid: 'CUST004',
+    customerName: 'Michael Brown',
+    helperUid: 'HELP004',
+    helperName: 'Daisy Helper',
+    workingDay: DateTime(2024, 12, 13),
+    startTime: DateTime(2024, 12, 13, 10, 0),
+    finishedTime: DateTime(2024, 12, 13, 12, 30),
+    location: '321 Pine Road',
+    note: 'Install ceiling fan',
+    paymentMethod: 'Debit Card',
+    cardName: 'Michael Brown',
+    cardNumber: '5678 1234 4321 8765',
+    cvv: '789',
+    status: '3', // Cancelled
   ),
 ];

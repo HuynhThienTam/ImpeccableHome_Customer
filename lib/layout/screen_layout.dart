@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:impeccablehome_customer/screens/bookings_screen.dart';
 import 'package:impeccablehome_customer/screens/home_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 
@@ -36,7 +37,7 @@ class _ScreenLayoutState extends State<ScreenLayout> {
 
   final List<Widget> _screens = [
     HomeScreen(),
-    Center(child: Text('Bookings Screen')),
+    BookingsScreen(),
     Center(child: Text('Chat Screen')),
     Center(child: Text('Notifications Screen')),
   ];

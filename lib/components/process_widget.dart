@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
+
 class ProcessWidget extends StatelessWidget {
   final List<String> processes;
   final List<String> doneProcesses;
@@ -16,36 +17,44 @@ class ProcessWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         // Row for dots and lines
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: List.generate(
-            processes.length * 2 - 1,
-            (index) {
-              if (index.isEven) {
-                // Dot
-                int dotIndex = index ~/ 2;
-                return Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: dotIndex <= currentProcess ? crimsonRedColor: silverGrayColor,
-                    shape: BoxShape.circle,
-                  ),
-                );
-              } else {
-                // Line
-                return Expanded(
-                  child: Container(
-                    height: 2,
-                    color: index ~/ 2 < currentProcess ? crimsonRedColor : silverGrayColor,
-                  ),
-                );
-              }
-            },
+        Padding(
+          padding:  EdgeInsets.symmetric(horizontal:  screenWidth/14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: List.generate(
+              processes.length * 2 - 1,
+              (index) {
+                if (index.isEven) {
+                  // Dot
+                  int dotIndex = index ~/ 2;
+                  return Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: dotIndex <= currentProcess
+                          ? crimsonRedColor
+                          : silverGrayColor,
+                      shape: BoxShape.circle,
+                    ),
+                  );
+                } else {
+                  // Line
+                  return Expanded(
+                    child: Container(
+                      height: 2,
+                      color: index ~/ 2 < currentProcess
+                          ? crimsonRedColor
+                          : silverGrayColor,
+                    ),
+                  );
+                }
+              },
+            ),
           ),
         ),
         const SizedBox(height: 16),
@@ -54,18 +63,26 @@ class ProcessWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: List.generate(
             processes.length,
-            (index) => Text(
-              index < currentProcess
-                  ? doneProcesses[index]
-                  : index == currentProcess
-                      ? currentProcesses[index]
-                      : processes[index],
-              style: TextStyle(
-                color: index <= currentProcess ? crimsonRedColor: silverGrayColor,
-                fontSize: 12,
-              ),
-              textAlign: TextAlign.center,
-            ),
+            (index) {
+              return Container(
+                width: 80, // Set a fixed width, adjust as needed
+                alignment: Alignment.center,
+                child: Text(
+                  index < currentProcess
+                      ? doneProcesses[index]
+                      : index == currentProcess
+                          ? currentProcesses[index]
+                          : processes[index],
+                  style: TextStyle(
+                    color: index <= currentProcess
+                        ? crimsonRedColor
+                        : silverGrayColor,
+                    fontSize: 12,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              );
+            },
           ),
         ),
       ],

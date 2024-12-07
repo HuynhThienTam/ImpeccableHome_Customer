@@ -6,16 +6,16 @@ import 'package:impeccablehome_customer/components/smallProcessWidget.dart';
 import 'package:impeccablehome_customer/screens/booking_review_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 
-class StepTwoBookingProcessScreen extends StatefulWidget {
-  const StepTwoBookingProcessScreen({super.key});
+class BookingPaymentMethodProvidingScreen extends StatefulWidget {
+  const BookingPaymentMethodProvidingScreen({super.key});
 
   @override
-  State<StepTwoBookingProcessScreen> createState() =>
-      _StepTwoBookingProcessScreenState();
+  State<BookingPaymentMethodProvidingScreen> createState() =>
+      _BookingPaymentMethodProvidingScreenState();
 }
 
-class _StepTwoBookingProcessScreenState
-    extends State<StepTwoBookingProcessScreen> {
+class _BookingPaymentMethodProvidingScreenState
+    extends State<BookingPaymentMethodProvidingScreen> {
   final List<String> paymentMethods = ["Credit card", "Paypal", "Cash"];
   final TextEditingController cardHolderNameController =
       TextEditingController();

@@ -9,21 +9,21 @@ import 'package:impeccablehome_customer/components/note_input.dart';
 import 'package:impeccablehome_customer/components/smallProcessWidget.dart';
 import 'package:impeccablehome_customer/model/helper_model.dart';
 import 'package:impeccablehome_customer/model/service_model.dart';
-import 'package:impeccablehome_customer/screens/step_two_booking_process_screen.dart';
+import 'package:impeccablehome_customer/screens/booking_payment_method_providing_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 import 'package:impeccablehome_customer/utils/mock.dart';
 
-class StepOneBookingProcessScreen extends StatefulWidget {
+class BookingDetailsProvidingScreen extends StatefulWidget {
   final ServiceModel service;
-  const StepOneBookingProcessScreen({super.key, required this.service});
+  const BookingDetailsProvidingScreen ({super.key, required this.service});
 
   @override
-  State<StepOneBookingProcessScreen> createState() =>
-      _StepOneBookingProcessScreenState();
+  State<BookingDetailsProvidingScreen > createState() =>
+      _BookingDetailsProvidingScreenState();
 }
 
-class _StepOneBookingProcessScreenState
-    extends State<StepOneBookingProcessScreen> {
+class _BookingDetailsProvidingScreenState
+    extends State<BookingDetailsProvidingScreen > {
   final TextEditingController dateController = TextEditingController();
   final TextEditingController startTimeController = TextEditingController();
   final TextEditingController finishedTimeController = TextEditingController();
@@ -409,7 +409,7 @@ class _StepOneBookingProcessScreenState
                   Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => StepTwoBookingProcessScreen(),
+                            builder: (context) => BookingPaymentMethodProvidingScreen(),
                           ),
                         );
                 },
