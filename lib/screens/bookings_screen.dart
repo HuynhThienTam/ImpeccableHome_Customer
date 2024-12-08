@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:impeccablehome_customer/components/booking_widget.dart';
+import 'package:impeccablehome_customer/components/completed_booking_widget.dart';
 import 'package:impeccablehome_customer/components/custom_back_button.dart';
 import 'package:impeccablehome_customer/components/process_widget.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 import 'package:impeccablehome_customer/utils/mock.dart';
 
 class BookingsScreen extends StatefulWidget {
+  
   const BookingsScreen({super.key});
 
   @override
@@ -18,6 +20,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -28,14 +31,11 @@ class _BookingsScreenState extends State<BookingsScreen> {
               Padding(
                 padding: EdgeInsets.only(
                   top: screenWidth * (1 / 6),
-                  left: screenWidth * (1 / 13),
                 ),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CustomBackButton(color: Colors.blue),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * (7 / 25),
-                    ),
+                    
                     Text(
                       "Bookings",
                       style: TextStyle(
@@ -75,7 +75,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                 ),
               ),
               SizedBox(
-                height: 20,
+                height: 50,
               ),
               // TabBar Section
               DefaultTabController(
@@ -86,31 +86,83 @@ class _BookingsScreenState extends State<BookingsScreen> {
                       labelColor: Colors.black,
                       unselectedLabelColor: silverGrayColor,
                       indicatorColor: skyBlueColor,
-                      tabs: const [
+                      tabs: [
                         Tab(
-                          child: Text("Completed", style: TextStyle(fontWeight: FontWeight.w500),),
+                          child: Text(
+                            "Completed",
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
                         ), // First tab
                         Tab(
-                          child: Text("Cancel", style: TextStyle(fontWeight: FontWeight.w500),),
+                          child: Text(
+                            "Cancel",
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
                         ), // Second tab
                       ],
                     ),
                     // TabBarView to show different screens
                     SizedBox(
-                      height:
-                          200, // Limit the height of TabBarView (adjust as needed)
-                      child: const TabBarView(
+                      height: screenHeight -
+                          screenWidth *
+                              (2 /
+                                  5), // Limit the height of TabBarView (adjust as needed)
+                      child: TabBarView(
                         children: [
-                          Center(child: Text('Screen 1 Content')), // Screen 1
-                          Center(child: Text('Screen 2 Content')), // Screen 2
+                          SingleChildScrollView(
+                            child: Column(children: [
+                              SizedBox(
+                                height: 25,
+                              ),
+                              Column(
+                                children: List.generate(
+                                  bookings.length,
+                                  (index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: CompletedBookingWidget(
+                                        booking: bookings[index],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                            ]),
+                          ),
+                          // Screen 1
+                          SingleChildScrollView(
+                            child: Column(children: [
+                              SizedBox(
+                                height: 25,
+                              ),
+                              Column(
+                                children: List.generate(
+                                  bookings.length,
+                                  (index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: CompletedBookingWidget(
+                                        booking: bookings[index],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                            ]),
+                          ), // Screen 2
                         ],
                       ),
                     ),
                   ],
                 ),
-              ),
-              SizedBox(
-                height: 25,
               ),
             ],
           ),

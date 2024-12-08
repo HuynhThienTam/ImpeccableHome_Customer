@@ -1,21 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:impeccablehome_customer/components/custom_button.dart';
-import 'package:impeccablehome_customer/components/process_widget.dart';
 import 'package:impeccablehome_customer/model/booking_model.dart';
 import 'package:impeccablehome_customer/screens/booking_details_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 
-class BookingWidget extends StatefulWidget {
+class CompletedBookingWidget extends StatefulWidget {
   final BookingModel booking;
-
-  const BookingWidget({Key? key, required this.booking}) : super(key: key);
+  const CompletedBookingWidget({super.key, required this.booking});
 
   @override
-  State<BookingWidget> createState() => _BookingWidgetState();
+  State<CompletedBookingWidget> createState() => _CompletedBookingWidgetState();
 }
 
-class _BookingWidgetState extends State<BookingWidget> {
+class _CompletedBookingWidgetState extends State<CompletedBookingWidget> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -71,15 +69,6 @@ class _BookingWidgetState extends State<BookingWidget> {
                 fontWeight: FontWeight.w400,
               ),
             ),
-            const SizedBox(height: 20),
-            Text(
-              "Location",
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
-              ),
-            ),
             Text(
               widget.booking.location,
               style: TextStyle(
@@ -89,32 +78,37 @@ class _BookingWidgetState extends State<BookingWidget> {
               ),
             ),
             const SizedBox(height: 20),
-            ProcessWidget(
-              processes: processesList,
-              doneProcesses: doneProcessesList,
-              currentProcesses: currentProcessesList,
-              currentProcess:
-                  int.parse(widget.booking.status), // Dynamically set
-            ),
-            const SizedBox(height: 20),
-            Center(
-              child: Container(
-                height: 48,
-                width: 160,
-                child: CustomButton(
-                  title: "View",
-                  onTap: () {
-                    Navigator.push(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  height: 48,
+                  width: 130,
+                  child: CustomButton(
+                    title: "View",
+                    onTap: () {
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => BookingDetailsScreen(booking: widget.booking,),
                         ),
                       );
-                  },
-                  backgroundColor: orangeColor,
-                  textColor: Colors.black,
+                    },
+                    textColor: Colors.black,
+                    backgroundColor: orangeColor,
+                  ),
                 ),
-              ),
+                Container(
+                  height: 48,
+                  width: 130,
+                  child: CustomButton(
+                    title: "Book again",
+                    onTap: () {},
+                    textColor: Colors.black,
+                    backgroundColor: neonGreenColor,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 25),
           ],
@@ -123,19 +117,3 @@ class _BookingWidgetState extends State<BookingWidget> {
     );
   }
 }
-
-final List<String> processesList = [
-  'Confirm',
-  'Arrive',
-  'Finish',
-];
-final List<String> doneProcessesList = [
-  'Confirmed',
-  'Arrived',
-  'Finished',
-];
-final List<String> currentProcessesList = [
-  'Wait for confirm',
-  'Arriving',
-  'Doing job',
-];

@@ -5,6 +5,10 @@ import 'package:impeccablehome_customer/screens/home_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 
 class ScreenLayout extends StatefulWidget {
+  final int initialIndex;
+
+  const ScreenLayout({Key? key, this.initialIndex = 0}) : super(key: key);
+
   @override
   _ScreenLayoutState createState() => _ScreenLayoutState();
 }
@@ -41,6 +45,12 @@ class _ScreenLayoutState extends State<ScreenLayout> {
     Center(child: Text('Chat Screen')),
     Center(child: Text('Notifications Screen')),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+  }
 
   @override
   Widget build(BuildContext context) {

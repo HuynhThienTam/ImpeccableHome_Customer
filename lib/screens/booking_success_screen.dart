@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:impeccablehome_customer/components/custom_button.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
+import 'package:impeccablehome_customer/layout/screen_layout.dart';
 
 class BookingSuccessScreen extends StatefulWidget {
   const BookingSuccessScreen({super.key});
@@ -60,7 +61,15 @@ class _BookingSuccessScreenState extends State<BookingSuccessScreen> {
                     width: 160,
                     child: CustomButton(
                       title: "Home",
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ScreenLayout(), // 1 is the index for Bookings
+                          ),
+                        );
+                      },
                       textColor: Colors.black,
                       backgroundColor: orangeColor,
                     ),
@@ -70,13 +79,21 @@ class _BookingSuccessScreenState extends State<BookingSuccessScreen> {
                     width: 160,
                     child: CustomButton(
                       title: "Track",
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ScreenLayout(
+                                initialIndex: 1), // 1 is the index for Bookings
+                          ),
+                        );
+                      },
                       textColor: Colors.black,
                       backgroundColor: neonGreenColor,
                     ),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
