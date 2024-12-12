@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:impeccablehome_customer/components/big_button.dart';
 import 'package:impeccablehome_customer/components/carousel_widget.dart';
+import 'package:impeccablehome_customer/components/custom_drawer.dart';
 import 'package:impeccablehome_customer/components/gradient_container.dart';
 import 'package:impeccablehome_customer/components/search_bar_widget.dart';
 import 'package:impeccablehome_customer/resources/authentication_method.dart';
@@ -10,8 +11,9 @@ import 'package:impeccablehome_customer/utils/color_themes.dart';
 import 'package:impeccablehome_customer/utils/mock.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
+  final VoidCallback openEndDrawer;
+  const HomeScreen({super.key, required this.openEndDrawer});
+  
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -33,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
       //     ),
       //   ],
       // ),
+      
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -75,10 +78,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ],
                                 ),
                                 Expanded(child: Container()),
-                                Image.asset(
-                                  "assets/icons/drawer_icon.png",
-                                  height: MediaQuery.of(context).size.width *
-                                      (1 / 8),
+                                Builder(
+                                  builder: (BuildContext context) {
+                                    return GestureDetector(
+                                      onTap: widget.openEndDrawer,
+                                      child: Image.asset(
+                                        "assets/icons/drawer_icon.png",
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                (1 / 8),
+                                      ),
+                                    );
+                                  },
                                 ),
                               ],
                             ),
@@ -116,7 +127,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => BookingDetailsProvidingScreen(service: service,),
+                            builder: (context) => BookingDetailsProvidingScreen(
+                              service: service,
+                            ),
                           ),
                         );
                       },

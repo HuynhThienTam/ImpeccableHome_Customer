@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:impeccablehome_customer/components/custom_drawer.dart';
 import 'package:impeccablehome_customer/screens/bookings_screen.dart';
 import 'package:impeccablehome_customer/screens/home_screen.dart';
+import 'package:impeccablehome_customer/screens/notification_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 
 class ScreenLayout extends StatefulWidget {
@@ -15,7 +17,7 @@ class ScreenLayout extends StatefulWidget {
 
 class _ScreenLayoutState extends State<ScreenLayout> {
   int _currentIndex = 0;
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final List<Map<String, String>> _tabs = [
     {
       'label': 'Home',
@@ -39,12 +41,93 @@ class _ScreenLayoutState extends State<ScreenLayout> {
     },
   ];
 
-  final List<Widget> _screens = [
-    HomeScreen(),
-    BookingsScreen(),
-    Center(child: Text('Chat Screen')),
-    Center(child: Text('Notifications Screen')),
-  ];
+  // final List<Widget> _screens = [
+  //   HomeScreen(
+  //     openEndDrawer: () {
+  //       Scaffold.of(context).openEndDrawer();
+  //     },
+  //   ),
+  //   BookingsScreen(),
+  //   Center(child: Text('Chat Screen')),
+  //   Center(child: Text('Notifications Screen')),
+  // ];
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _currentIndex = widget.initialIndex;
+  // }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   final screenWidth = MediaQuery.of(context).size.width;
+
+  //   return Scaffold(
+  //     body: _screens[_currentIndex],
+  //     endDrawer: CustomDrawer(
+  //       username: "John Doe",
+  //       avatarUrl: "https://example.com/avatar.jpg", // Replace with a real URL
+  //     ),
+  //     bottomNavigationBar: Column(
+  //       mainAxisSize: MainAxisSize.min,
+  //       children: [
+  //         // Tab bar indicator with animation
+  //         Container(
+  //           alignment: Alignment.centerLeft,
+  //           child: AnimatedContainer(
+  //             duration: const Duration(milliseconds: 300),
+  //             curve: Curves.easeInOut,
+  //             height: 4,
+  //             width: 40,
+  //             color: skyBlueColor,
+  //             margin: EdgeInsets.only(
+  //               left: (screenWidth / _tabs.length) * _currentIndex +
+  //                   (screenWidth / _tabs.length - 40) /
+  //                       2, // Center the indicator
+  //             ),
+  //           ),
+  //         ),
+  //         // Bottom navigation bar
+  //         BottomNavigationBar(
+  //           currentIndex: _currentIndex,
+  //           onTap: (index) {
+  //             setState(() {
+  //               _currentIndex = index;
+  //             });
+  //           },
+  //           type: BottomNavigationBarType.fixed,
+  //           selectedFontSize: 14,
+  //           unselectedFontSize: 14,
+  //           showSelectedLabels: true,
+  //           showUnselectedLabels: true,
+  //           items: _tabs.map((tab) {
+  //             int tabIndex = _tabs.indexOf(tab);
+  //             bool isSelected = tabIndex == _currentIndex;
+  //             return BottomNavigationBarItem(
+  //               icon: Column(
+  //                 children: [
+  //                   Image.asset(
+  //                     isSelected ? tab['activeIcon']! : tab['inactiveIcon']!,
+  //                     height: 24,
+  //                     width: 24,
+  //                   ),
+  //                   Text(
+  //                     tab['label']!,
+  //                     style: TextStyle(
+  //                       color: isSelected ? skyBlueColor : silverGrayColor,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //               label: '',
+  //             );
+  //           }).toList(),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+  final List<Widget> _screens = []; // Declare it as empty initially.
 
   @override
   void initState() {
@@ -56,8 +139,25 @@ class _ScreenLayoutState extends State<ScreenLayout> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
+    // Populate _screens in build method where context is available
+    final _screens = [
+      HomeScreen(
+        openEndDrawer: () {
+          _scaffoldKey.currentState?.openEndDrawer();
+        },
+      ),
+      BookingsScreen(),
+      Center(child: Text('Chat Screen')),
+      NotificationScreen(),
+    ];
+
     return Scaffold(
+      key: _scaffoldKey,
       body: _screens[_currentIndex],
+      endDrawer: CustomDrawer(
+        username: "John Doe",
+        avatarUrl: "https://example.com/avatar.jpg", // Replace with a real URL
+      ),
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -72,7 +172,8 @@ class _ScreenLayoutState extends State<ScreenLayout> {
               color: skyBlueColor,
               margin: EdgeInsets.only(
                 left: (screenWidth / _tabs.length) * _currentIndex +
-                    (screenWidth / _tabs.length - 40) / 2, // Center the indicator
+                    (screenWidth / _tabs.length - 40) /
+                        2, // Center the indicator
               ),
             ),
           ),

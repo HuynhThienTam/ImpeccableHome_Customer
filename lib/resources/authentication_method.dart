@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:impeccablehome_customer/layout/screen_layout.dart';
 import 'package:impeccablehome_customer/model/user_model.dart';
 import 'package:impeccablehome_customer/resources/cloud_firestore_methods.dart';
 import 'package:impeccablehome_customer/screens/home_screen.dart';
@@ -83,7 +84,7 @@ class AuthenticationMethods extends ChangeNotifier {
           .set(userModel.toMap());
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const ScreenLayout(initialIndex: 0,)),
           (route) => false);
     } on FirebaseAuthException catch (e) {
       showSnackBar(context, e.message.toString());
@@ -181,7 +182,7 @@ void signIn({
       });
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const ScreenLayout(initialIndex: 0,)),
           (route) => false);
     } on FirebaseAuthException catch (e) {
       showSnackBar(context, e.message.toString());

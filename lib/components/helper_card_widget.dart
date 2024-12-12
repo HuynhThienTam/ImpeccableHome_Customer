@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:impeccablehome_customer/model/helper_model.dart';
+import 'package:impeccablehome_customer/screens/helper_profile_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 import 'package:flutter/material.dart';
 
@@ -106,7 +107,12 @@ class HelperCardWidget extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 18),
                 child: ElevatedButton(
                   onPressed: () {
-                    // Handle "View" action if needed
+                     Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HelperProfileScreen(helper: helper,),
+                          ),
+                        );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: skyBlueColor,

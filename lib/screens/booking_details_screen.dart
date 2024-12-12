@@ -4,6 +4,7 @@ import 'package:impeccablehome_customer/components/custom_back_button.dart';
 import 'package:impeccablehome_customer/components/custom_button.dart';
 import 'package:impeccablehome_customer/components/process_widget.dart';
 import 'package:impeccablehome_customer/model/booking_model.dart';
+import 'package:impeccablehome_customer/screens/add_review_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 
 class BookingDetailsScreen extends StatefulWidget {
@@ -249,7 +250,8 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                           height: 20,
                         ),
                         Padding(
-                          padding:  EdgeInsets.symmetric(horizontal:  screenWidth/8),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: screenWidth / 8),
                           child: Container(
                             height: 48,
                             width: double.infinity,
@@ -274,7 +276,15 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                                   width: 130,
                                   child: CustomButton(
                                     title: "Review",
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              AddReviewScreen(),
+                                        ),
+                                      );
+                                    },
                                     textColor: Colors.black,
                                     backgroundColor: orangeColor,
                                   ),

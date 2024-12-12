@@ -1,59 +1,61 @@
-  import 'package:impeccablehome_customer/model/booking_model.dart';
+import 'package:impeccablehome_customer/model/booking_model.dart';
 import 'package:impeccablehome_customer/model/helper_model.dart';
+import 'package:impeccablehome_customer/model/notification_model.dart';
+import 'package:impeccablehome_customer/model/review_model.dart';
 import 'package:impeccablehome_customer/model/service_model.dart';
 
 final List<ServiceModel> services = [
-    ServiceModel(
-      serviceId: '1',
-      serviceName: 'Clean-up & Laundry',
-      serviceDescription: 'Thorough cleaning and laundry services.',
-      serviceBasePrice: 50.0,
-      imagePath: 'assets/icons/cleanup_icon.png',
-      colorfulImagePath: 'assets/images/colorful_cleanup_image.png',
-    ),
-    ServiceModel(
-      serviceId: '2',
-      serviceName: 'Plumbing',
-      serviceDescription: 'Expert plumbing solutions.',
-      serviceBasePrice: 75.0,
-      imagePath: 'assets/icons/plumbing_icon.png',
-      colorfulImagePath: 'assets/images/colorful_plumbing_image.png',
-    ),
-    ServiceModel(
-      serviceId: '3',
-      serviceName: 'Cooking',
-      serviceDescription: 'Delicious home-cooked meals.',
-      serviceBasePrice: 40.0,
-      imagePath: 'assets/icons/cooking_icon.png',
-      colorfulImagePath: 'assets/images/colorful_cooking_image.png',
-    ),
-    ServiceModel(
-      serviceId: '4',
-      serviceName: 'Electricity',
-      serviceDescription: 'Electrical repairs and maintenance.',
-      serviceBasePrice: 60.0,
-      imagePath: 'assets/icons/electricity_icon.png',
-      colorfulImagePath: 'assets/images/colorful_electricity_image.png',
-    ),
-    ServiceModel(
-      serviceId: '5',
-      serviceName: 'Gardening',
-      serviceDescription: 'Garden care and landscaping.',
-      serviceBasePrice: 45.0,
-      imagePath: 'assets/icons/gardening_icon.png',
-      colorfulImagePath: 'assets/images/colorful_gardening_image.png',
-    ),
-    ServiceModel(
-      serviceId: '6',
-      serviceName: 'Grocery Shopping',
-      serviceDescription: 'Convenient grocery shopping.',
-      serviceBasePrice: 30.0,
-      imagePath: 'assets/icons/grocery_shopping_icon.png',
-      colorfulImagePath: 'assets/images/colorful_grocery_shopping_image.png',
-    ),
-  ];
+  ServiceModel(
+    serviceId: '1',
+    serviceName: 'Clean-up & Laundry',
+    serviceDescription: 'Thorough cleaning and laundry services.',
+    serviceBasePrice: 50.0,
+    imagePath: 'assets/icons/cleanup_icon.png',
+    colorfulImagePath: 'assets/images/colorful_cleanup_image.png',
+  ),
+  ServiceModel(
+    serviceId: '2',
+    serviceName: 'Plumbing',
+    serviceDescription: 'Expert plumbing solutions.',
+    serviceBasePrice: 75.0,
+    imagePath: 'assets/icons/plumbing_icon.png',
+    colorfulImagePath: 'assets/images/colorful_plumbing_image.png',
+  ),
+  ServiceModel(
+    serviceId: '3',
+    serviceName: 'Cooking',
+    serviceDescription: 'Delicious home-cooked meals.',
+    serviceBasePrice: 40.0,
+    imagePath: 'assets/icons/cooking_icon.png',
+    colorfulImagePath: 'assets/images/colorful_cooking_image.png',
+  ),
+  ServiceModel(
+    serviceId: '4',
+    serviceName: 'Electricity',
+    serviceDescription: 'Electrical repairs and maintenance.',
+    serviceBasePrice: 60.0,
+    imagePath: 'assets/icons/electricity_icon.png',
+    colorfulImagePath: 'assets/images/colorful_electricity_image.png',
+  ),
+  ServiceModel(
+    serviceId: '5',
+    serviceName: 'Gardening',
+    serviceDescription: 'Garden care and landscaping.',
+    serviceBasePrice: 45.0,
+    imagePath: 'assets/icons/gardening_icon.png',
+    colorfulImagePath: 'assets/images/colorful_gardening_image.png',
+  ),
+  ServiceModel(
+    serviceId: '6',
+    serviceName: 'Grocery Shopping',
+    serviceDescription: 'Convenient grocery shopping.',
+    serviceBasePrice: 30.0,
+    imagePath: 'assets/icons/grocery_shopping_icon.png',
+    colorfulImagePath: 'assets/images/colorful_grocery_shopping_image.png',
+  ),
+];
 
-  List<HelperModel> helpers = [
+List<HelperModel> helpers = [
   HelperModel(
     firstName: "John",
     lastName: "Doe",
@@ -76,6 +78,8 @@ final List<ServiceModel> services = [
     emergencyContactAddress: "123 Main St",
     isApproved: "yes",
     ratings: 4.5,
+    dateOfBirth: "1991-02-15",
+    gender: "female",
   ),
   HelperModel(
     firstName: "Emily",
@@ -99,6 +103,8 @@ final List<ServiceModel> services = [
     emergencyContactAddress: "456 Elm St",
     isApproved: "yes",
     ratings: 4.8,
+    dateOfBirth: "1999-12-04",
+    gender: "male",
   ),
   HelperModel(
     firstName: "Michael",
@@ -122,6 +128,8 @@ final List<ServiceModel> services = [
     emergencyContactAddress: "789 Pine St",
     isApproved: "no",
     ratings: 4.0,
+    dateOfBirth: "1996-06-11",
+    gender: "male",
   ),
   HelperModel(
     firstName: "Sophia",
@@ -145,6 +153,8 @@ final List<ServiceModel> services = [
     emergencyContactAddress: "101 Maple St",
     isApproved: "yes",
     ratings: 4.7,
+    dateOfBirth: "1992-10-03",
+    gender: "female",
   ),
   HelperModel(
     firstName: "James",
@@ -168,6 +178,8 @@ final List<ServiceModel> services = [
     emergencyContactAddress: "202 Oak St",
     isApproved: "notsubmitted",
     ratings: 3.9,
+    dateOfBirth: "1985-08-30",
+    gender: "male",
   ),
   HelperModel(
     firstName: "Olivia",
@@ -191,6 +203,8 @@ final List<ServiceModel> services = [
     emergencyContactAddress: "303 Birch St",
     isApproved: "yes",
     ratings: 4.6,
+    dateOfBirth: "1996-09-22",
+    gender: "female",
   ),
 ];
 List<BookingModel> bookings = [
@@ -265,5 +279,83 @@ List<BookingModel> bookings = [
     cardNumber: '5678 1234 4321 8765',
     cvv: '789',
     status: '3', // Cancelled
+  ),
+];
+
+
+
+final helper1WorkingTimes = [
+  {'day': 'Monday', 'startTime': '09:00', 'finishedTime': '17:00'},
+  {'day': 'Tuesday', 'startTime': '10:00', 'finishedTime': '18:00'},
+];
+
+final comment1PicandName = {
+  'name': 'John Doe',
+  'profilePic': "https://picsum.photos/200",
+};
+
+final List<ReviewModel> mockReviews = [
+    ReviewModel(
+      uid: 'user1',
+      userName: 'Alice',
+      profilePic:
+          'https://picsum.photos/200',
+      ratings: 4.5,
+      reviewContent: 'Great service! Will recommend to others.',
+      reviewPics: [
+        'https://picsum.photos/208',
+        'https://picsum.photos/209',
+      ],
+    ),
+    ReviewModel(
+      uid: 'user2',
+      userName: 'Bob',
+      profilePic:
+          'https://picsum.photos/201',
+      ratings: 3.0,
+      reviewContent: 'Good, but room for improvement.',
+      reviewPics: [],
+    ),
+    ReviewModel(
+      uid: 'user3',
+      userName: 'Charlie',
+      profilePic:
+          'https://picsum.photos/202',
+      ratings: 5.0,
+      reviewContent: 'Amazing experience, very professional!',
+      reviewPics: [
+        'https://picsum.photos/210',
+      ],
+    ),
+  ];
+
+
+
+// Mock data for NotificationModel
+List<NotificationModel> mockNotifications = [
+  NotificationModel(
+    title: 'We will have a scheduled maintenance tomorrow',
+    image: 'https://picsum.photos/200',
+    createdAt: DateTime.now().subtract(Duration(hours: 2)),
+    content: 'We will have a scheduled maintenance tomorrow from 1 AM to 3 AM.',
+    type: "serviceUpdate",
+    status: "notYetOpened", // Example status
+  ),
+  NotificationModel(
+    title: 'Your booking #12345 has been confirmed',
+    image: 'https://picsum.photos/201',
+    createdAt: DateTime.now().subtract(Duration(days: 2)),
+    content: 'Your booking #12345 has been confirmed.',
+    type: "inform",
+    bookingNumber: '12345',
+    status: "opened", // Example status
+  ),
+  NotificationModel(
+    title: 'Unusual login attempt detected.',
+    image: 'https://picsum.photos/202',
+    createdAt: DateTime.now().subtract(Duration(minutes: 30)),
+    content: 'Unusual login attempt detected. Please verify your account.',
+    type: "warning",
+    status: "notYetOpened", // Example status
   ),
 ];
