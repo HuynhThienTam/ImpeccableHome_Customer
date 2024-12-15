@@ -16,7 +16,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final avatarSize = screenWidth / 2;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(

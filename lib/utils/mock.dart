@@ -337,7 +337,7 @@ List<NotificationModel> mockNotifications = [
     title: 'We will have a scheduled maintenance tomorrow',
     image: 'https://picsum.photos/200',
     createdAt: DateTime.now().subtract(Duration(hours: 2)),
-    content: 'We will have a scheduled maintenance tomorrow from 1 AM to 3 AM.',
+    content: 'We will have a scheduled maintenance tomorrow from 1 AM to 3 AM. We sincerely apologize for this inconvenience',
     type: "serviceUpdate",
     status: "notYetOpened", // Example status
   ),

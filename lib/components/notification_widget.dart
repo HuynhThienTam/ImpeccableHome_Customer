@@ -93,6 +93,10 @@ class NotificationWidget extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
+                   SizedBox(
+                    height: 25,
+                  ),
+                  
                 ],
               ),
             ),
