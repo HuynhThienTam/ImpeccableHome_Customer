@@ -15,9 +15,7 @@ class _EditButtonState extends State<EditButton> {
     final screenWidth = MediaQuery.of(context).size.width;
     final iconWidth = screenWidth * 1 / 23;
     return GestureDetector(
-      onTap: () {
-        Navigator.of(context).pop();
-      },
+      onTap: widget.onTap,
       child: Container(
         height: iconWidth,
         width: iconWidth,

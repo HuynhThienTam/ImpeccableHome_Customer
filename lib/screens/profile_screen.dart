@@ -12,6 +12,7 @@ import 'package:impeccablehome_customer/components/photo_selector_dialog.dart';
 import 'package:impeccablehome_customer/model/user_model.dart';
 import 'package:impeccablehome_customer/resources/user_services.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
+import 'package:impeccablehome_customer/utils/utils.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -38,25 +39,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   final currentuser = FirebaseAuth.instance.currentUser;
-  // Function to fetch user data from Firestore
-  // Future<UserModel?> fetchUserDetails(String userId) async {
-  //   try {
-  //     final userDoc = await FirebaseFirestore.instance
-  //         .collection('users') // Firestore collection name
-  //         .doc(userId) // Document ID
-  //         .get();
-
-  //     if (userDoc.exists) {
-  //       return UserModel.fromMap(userDoc.data()!);
-  //     } else {
-  //       debugPrint('User not found in Firestore');
-  //       return null;
-  //     }
-  //   } catch (e) {
-  //     debugPrint('Error fetching user: $e');
-  //     return null;
-  //   }
-  // }
   @override
   void dispose() {
     nameController.dispose();
@@ -64,6 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     phoneController.dispose();
     super.dispose();
   }
+
   Future<void> _fetchUser() async {
     try {
       final fetchedUser = await userService.fetchUserDetails(currentuser!.uid);
@@ -102,6 +85,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (e) {
       print("Error picking image: $e");
     }
+  }
+
+  Future<void> _updateDetails(String name, String email) async {
+      await userService.updateUserDetails(context,currentuser!.uid, name, email);
+      _fetchUser(); // Refresh the UI after update
+    
   }
 
   @override
@@ -162,9 +151,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 (screenWidth * 2 / 5) /
                                     2, // Center avatar horizontally
                             child: AvatarWidget(
-                              imageUrl: (profilePicUrl != null && profilePicUrl!="")
-                                  ? profilePicUrl!
-                                  : "https://picsum.photos/205",
+                              imageUrl:
+                                  (profilePicUrl != null && profilePicUrl != "")
+                                      ? profilePicUrl!
+                                      : "https://picsum.photos/205",
                               size: screenWidth * 2 / 5,
                               onPressed: () async {
                                 final selectedValue = await showDialog<String>(
@@ -211,14 +201,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           SizedBox(
                             height: 25,
                           ),
-                          CustomTextInput(
-                            hintText: "Enter your current phone number",
-                            prefixImage: Image.asset(
-                              "assets/icons/small_phone_icon.png",
-                              fit: BoxFit.contain,
+                          AbsorbPointer(
+                            child: CustomTextInput(
+                              hintText: "Enter your current phone number",
+                              prefixImage: Image.asset(
+                                "assets/icons/small_phone_icon.png",
+                                fit: BoxFit.contain,
+                              ),
+                              title: "Phone number",
+                              controller: phoneController,
                             ),
-                            title: "Phone number",
-                            controller: phoneController,
                           ),
                           SizedBox(
                             height: 25,
@@ -245,8 +237,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             height: 30,
                           ),
                           CustomButton(
-                            title: "Save",
-                            onTap: () {},
+                            title: "Save changes",
+                            onTap: () {
+                              String email = emailController.text.trim();
+                              String name = nameController.text.trim();
+                              if(name.isEmpty){
+                                showSnackBar(context, "Name is empty");
+                              }
+                              else if ((email != user!.email || name != user!.name))
+                                {
+                                  _updateDetails(name, email);
+                                }
+                            },
                             textColor: Colors.white,
                             backgroundColor: oceanBlueColor,
                           ),

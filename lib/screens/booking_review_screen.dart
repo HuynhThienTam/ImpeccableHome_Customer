@@ -3,255 +3,331 @@ import 'package:impeccablehome_customer/components/custom_back_button.dart';
 import 'package:impeccablehome_customer/components/custom_button.dart';
 import 'package:impeccablehome_customer/components/edit_button.dart';
 import 'package:impeccablehome_customer/components/smallProcessWidget.dart';
+import 'package:impeccablehome_customer/model/booking_model.dart';
+import 'package:impeccablehome_customer/model/helper_model.dart';
+import 'package:impeccablehome_customer/model/service_model.dart';
+import 'package:impeccablehome_customer/resources/booking_method.dart';
+import 'package:impeccablehome_customer/resources/helper_service.dart';
+import 'package:impeccablehome_customer/screens/booking_details_providing_screen.dart';
+import 'package:impeccablehome_customer/screens/booking_payment_method_providing_screen.dart';
 import 'package:impeccablehome_customer/screens/booking_success_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
+import 'package:impeccablehome_customer/utils/utils.dart';
+import 'package:provider/provider.dart';
 
 class BookingReviewScreen extends StatefulWidget {
-  const BookingReviewScreen({super.key});
+  final BookingModel bookingModel;
+  final ServiceModel serviceModel;
+  const BookingReviewScreen(
+      {super.key, required this.bookingModel, required this.serviceModel});
 
   @override
   State<BookingReviewScreen> createState() => _BookingReviewScreenState();
 }
 
 class _BookingReviewScreenState extends State<BookingReviewScreen> {
+  bool isLoading = true; // State to track loading
+  HelperModel? helperModel;
+  final HelperService helperService = HelperService();
+  String? workingDay;
+  String? startTime;
+  String? finishedTime;
+  @override
+  void initState() {
+    super.initState();
+    _fetchHelper();
+    setState(() {
+      workingDay = formatWorkingTime(widget.bookingModel.workingDay);
+      DateTime tempStartTime = widget.bookingModel.startTime;
+      DateTime tempFinishedTime = widget.bookingModel.finishedTime;
+      startTime =
+          "${tempStartTime.hour.toString().padLeft(2, '0')}:${tempStartTime.minute.toString().padLeft(2, '0')}";
+      finishedTime =
+          "${tempFinishedTime.hour.toString().padLeft(2, '0')}:${tempFinishedTime.minute.toString().padLeft(2, '0')}";
+    });
+  }
+
+  Future<void> _fetchHelper() async {
+    try {
+      final fetchedHelper =
+          await helperService.fetchHelperDetails(widget.bookingModel.helperUid);
+
+      if (fetchedHelper != null) {
+        setState(() {
+          helperModel = fetchedHelper;
+        });
+      }
+    } catch (e) {
+      // Handle errors (optional)
+      print('Error fetching helper: $e');
+    } finally {
+      setState(() {
+        isLoading = false; // Stop loading once data is fetched
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(
-                  top: screenWidth * (1 / 6),
-                  left: screenWidth * (1 / 13),
-                ),
-                child: Row(
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(), // Show loading indicator
+            )
+          : SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    CustomBackButton(color: Colors.blue),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * (1 / 7),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: screenWidth * (1 / 6),
+                        left: screenWidth * (1 / 13),
+                      ),
+                      child: Row(
+                        children: [
+                          CustomBackButton(color: Colors.blue),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * (1 / 7),
+                          ),
+                          Text(
+                            "Confirm your booking",
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black),
+                          ),
+                        ],
+                      ),
                     ),
-                    Text(
-                      "Confirm your booking",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black),
+                    SizedBox(
+                      height: 25,
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                        left: (screenWidth / 12),
+                        right: (screenWidth / 12),
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: silverGrayColor, // Grey border
+                          width: 1, // Border width
+                        ),
+                        borderRadius: BorderRadius.circular(12), // Roun
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 25,
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "Booking detail",
+                                  style: TextStyle(
+                                      color: oceanBlueColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                Expanded(child: Container()),
+                                EditButton(onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            BookingDetailsProvidingScreen(
+                                                service: widget.serviceModel,
+                                                isFromHome: false),
+                                      ));
+                                }),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              "Working time",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              workingDay!,
+                              style: TextStyle(
+                                  color: oceanBlueColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                            Text(
+                              "$startTime - $finishedTime",
+                              style: TextStyle(
+                                  color: oceanBlueColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              "Location",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              widget.bookingModel.location,
+                              style: TextStyle(
+                                  color: oceanBlueColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              "Note",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              widget.bookingModel.note,
+                              style: TextStyle(
+                                  color: oceanBlueColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              "Domestic worker",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              "${helperModel!.firstName} ${helperModel!.lastName}",
+                              style: TextStyle(
+                                  color: oceanBlueColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                            SizedBox(
+                              height: 25,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 25,
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                        left: (screenWidth / 12),
+                        right: (screenWidth / 12),
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: silverGrayColor, // Grey border
+                          width: 1, // Border width
+                        ),
+                        borderRadius: BorderRadius.circular(12), // Roun
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 25,
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "Payment detail",
+                                  style: TextStyle(
+                                      color: oceanBlueColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                Expanded(child: Container()),
+                                EditButton(onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            BookingPaymentMethodProvidingScreen(
+                                                isFromHome: false,
+                                                serviceModel:
+                                                    widget.serviceModel),
+                                      ));
+                                }),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              "Payment method",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              widget.bookingModel.paymentMethod,
+                              style: TextStyle(
+                                  color: oceanBlueColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              "Cost",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              "${widget.serviceModel.serviceBasePrice}/1 hour",
+                              style: TextStyle(
+                                  color: oceanBlueColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                            SizedBox(
+                              height: 25,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(
-                height: 25,
-              ),
-              Container(
-                margin: EdgeInsets.only(
-                  left: (screenWidth / 12),
-                  right: (screenWidth / 12),
-                ),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: silverGrayColor, // Grey border
-                    width: 1, // Border width
-                  ),
-                  borderRadius: BorderRadius.circular(12), // Roun
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 25,
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            "Booking detail",
-                            style: TextStyle(
-                                color: oceanBlueColor,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          Expanded(child: Container()),
-                          EditButton(onTap: () {}),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        "Working time",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                      Text(
-                        "Monday-22 Mar 2021",
-                        style: TextStyle(
-                            color: oceanBlueColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      Text(
-                        "12:30",
-                        style: TextStyle(
-                            color: oceanBlueColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400),
-                      ),
-                       SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        "Location",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                      Text(
-                        "Room 123, Brooklyn St, Kepler District",
-                        style: TextStyle(
-                            color: oceanBlueColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400),
-                      ),
-                       SizedBox(
-                        height: 20,
-                      ),
-                       Text(
-                        "Note",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                      Text(
-                        "No note added",
-                        style: TextStyle(
-                            color: oceanBlueColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                       Text(
-                        "Domestic worker",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                      Text(
-                        "Janet Kim",
-                        style: TextStyle(
-                            color: oceanBlueColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      SizedBox(
-                        height: 25,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 25,
-              ),
-              Container(
-                margin: EdgeInsets.only(
-                  left: (screenWidth / 12),
-                  right: (screenWidth / 12),
-                ),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: silverGrayColor, // Grey border
-                    width: 1, // Border width
-                  ),
-                  borderRadius: BorderRadius.circular(12), // Roun
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 25,
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            "Payment detail",
-                            style: TextStyle(
-                                color: oceanBlueColor,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          Expanded(child: Container()),
-                          EditButton(onTap: () {}),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                       Text(
-                        "Payment method",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                      Text(
-                        "Credit card",
-                        style: TextStyle(
-                            color: oceanBlueColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                       Text(
-                        "Cost",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                      Text(
-                        "12.50/1 hour",
-                        style: TextStyle(
-                            color: oceanBlueColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      SizedBox(
-                        height: 25,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
       bottomNavigationBar: Container(
         height: screenWidth / 5,
         decoration: BoxDecoration(
@@ -277,7 +353,7 @@ class _BookingReviewScreenState extends State<BookingReviewScreen> {
               width: 24,
             ),
             Container(
-              width: screenWidth* (3/8),
+              width: screenWidth * (3 / 8),
               child: SmallProcessWidget(
                 currentProcess: 2,
                 numberOfProcesses: 3,
@@ -292,12 +368,7 @@ class _BookingReviewScreenState extends State<BookingReviewScreen> {
               child: CustomButton(
                 title: "Book now",
                 onTap: () {
-                  Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BookingSuccessScreen(),
-                          ),
-                        );
+                  upLoadBooking();
                 },
                 backgroundColor: neonGreenColor,
                 textColor: Colors.black,
@@ -310,5 +381,10 @@ class _BookingReviewScreenState extends State<BookingReviewScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> upLoadBooking() async {
+    final bookingMethods = Provider.of<BookingMethods>(context, listen: false);
+    bookingMethods.uploadBookingToFirebase(context);
   }
 }

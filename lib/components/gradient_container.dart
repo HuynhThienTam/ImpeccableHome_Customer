@@ -44,7 +44,7 @@ class GradientContainer extends StatelessWidget {
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(
                         iconHeight / 9), // Adjust as needed
-                    child: Image.asset(
+                    child: Image.network(
                       imagePath,
                       fit:
                           BoxFit.cover, // Ensures the image fills the container

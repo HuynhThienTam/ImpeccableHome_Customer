@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:impeccablehome_customer/model/user_model.dart';
+import 'package:impeccablehome_customer/utils/utils.dart';
 
 class UserService {
   final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
@@ -70,5 +71,25 @@ class UserService {
     TaskSnapshot snapshot = await uploadTask;
     String downloadUrl = await snapshot.ref.getDownloadURL();
     return downloadUrl;
+  }
+
+  Future<void> updateUserDetails(BuildContext context,
+      String userId, String name, String email) async {
+    try {
+      // Reference to the user's document in the 'users' collection
+      final userRef =
+          FirebaseFirestore.instance.collection('users').doc(userId);
+
+      // Update the user's name and email
+      await userRef.update({
+        'name': name,
+        'email': email,
+      });
+
+      print('User details updated successfully.');
+      showSnackBar(context, 'User details updated successfully.');
+    } catch (e) {
+      print('Error updating user details: $e');
+    }
   }
 }

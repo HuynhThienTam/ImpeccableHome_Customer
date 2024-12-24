@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:impeccablehome_customer/components/big_button.dart';
@@ -5,37 +6,54 @@ import 'package:impeccablehome_customer/components/carousel_widget.dart';
 import 'package:impeccablehome_customer/components/custom_drawer.dart';
 import 'package:impeccablehome_customer/components/gradient_container.dart';
 import 'package:impeccablehome_customer/components/search_bar_widget.dart';
+import 'package:impeccablehome_customer/model/service_model.dart';
 import 'package:impeccablehome_customer/resources/authentication_method.dart';
+import 'package:impeccablehome_customer/resources/booking_method.dart';
+import 'package:impeccablehome_customer/resources/cloud_firestore_methods.dart';
 import 'package:impeccablehome_customer/screens/booking_details_providing_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 import 'package:impeccablehome_customer/utils/mock.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback openEndDrawer;
   const HomeScreen({super.key, required this.openEndDrawer});
-  
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final CloudFirestoreClass cloudFirestoreClass = CloudFirestoreClass();
+  List<ServiceModel> servicesList = []; // Declare the list of services
+  bool isLoading = true; // Track loading state
+  final currentuser = FirebaseAuth.instance.currentUser;
+  @override
+  void initState() {
+    super.initState();
+    fetchServiceData();
+  }
+
+  Future<void> fetchServiceData() async {
+    try {
+      final fetchedServices =
+          await cloudFirestoreClass.fetchServices(); // Fetch services
+      setState(() {
+        servicesList = fetchedServices; // Update the list
+        isLoading = false; // Set loading to false
+      });
+    } catch (e) {
+      print('Error fetching services: $e');
+      setState(() {
+        isLoading = false; // Ensure loading is stopped on error
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.purple,
-      //   title: const Text("FlutterPhone Auth"),
-      //   actions: [
-      //     IconButton(
-      //       onPressed: () {
-      //         AuthenticationMethods().userSignOut();
-      //       },
-      //       icon: const Icon(Icons.exit_to_app),
-      //     ),
-      //   ],
-      // ),
-      
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -106,37 +124,48 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, // 2 buttons per row
-                    mainAxisSpacing: 16.0,
-                    crossAxisSpacing: 16.0,
-                    childAspectRatio: 5 / 4, // Adjusts height relative to width
-                  ),
-                  itemCount: services.length,
-                  itemBuilder: (context, index) {
-                    final service = services[index];
-                    return BigButton(
-                      title: service.serviceName,
-                      imagePath: service.imagePath,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BookingDetailsProvidingScreen(
-                              service: service,
+              isLoading
+                  ? Center(
+                      child:
+                          CircularProgressIndicator(), // Show loading indicator
+                    )
+                  : services.isEmpty
+                      ? const Center(child: Text('No services available.'))
+                      : Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2, // 2 buttons per row
+                              mainAxisSpacing: 16.0,
+                              crossAxisSpacing: 16.0,
+                              childAspectRatio:
+                                  5 / 4, // Adjusts height relative to width
                             ),
+                            itemCount: servicesList.length,
+                            itemBuilder: (context, index) {
+                              final service = servicesList[index];
+                              return BigButton(
+                                title: service.serviceName,
+                                imagePath: service.imagePath,
+                                onTap: () {
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) =>
+                                  //         BookingDetailsProvidingScreen(
+                                  //       service: service,
+                                  //     ),
+                                  //   ),
+                                  // );
+                                  initBooking(service, service.serviceId, currentuser!.uid);
+                                },
+                              );
+                            },
                           ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
+                        ),
               SizedBox(
                 height: 10,
               ),
@@ -156,9 +185,14 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 height: 20,
               ),
-              CarouselWidget(
-                services: services,
-              ),
+              isLoading
+                  ? Center(
+                      child:
+                          CircularProgressIndicator(), // Show loading indicator
+                    )
+                  : CarouselWidget(
+                      services: servicesList,
+                    ),
               SizedBox(
                 height: 30,
               ),
@@ -167,5 +201,12 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+    Future<void> initBooking(ServiceModel selectedServiceModel,String serviceType, String customerUid) async {
+    final bookingMethods =
+        Provider.of<BookingMethods>(context, listen: false);
+        bookingMethods.createNewBooking(context, selectedServiceModel, serviceType, customerUid);
+    
+    
   }
 }

@@ -1,10 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:impeccablehome_customer/auth/auth.dart';
 import 'package:impeccablehome_customer/phone_auth_example.dart';
 import 'package:impeccablehome_customer/resources/authentication_method.dart';
-import 'package:impeccablehome_customer/resources/user_details_provider.dart';
+import 'package:impeccablehome_customer/resources/booking_method.dart';
 import 'package:impeccablehome_customer/screens/create_password_screen.dart';
 import 'package:impeccablehome_customer/screens/login_screen.dart';
 import 'package:impeccablehome_customer/screens/reset_password_screen.dart';
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthenticationMethods()),
-        ChangeNotifierProvider(create: (_) => UserDetailsProvider()),
+        ChangeNotifierProvider(create:(_)=>BookingMethods()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

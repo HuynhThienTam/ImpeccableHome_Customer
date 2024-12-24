@@ -45,7 +45,7 @@ class BigButton extends StatelessWidget {
             Container(
               height: iconHeight,
               width: iconWidth,
-              child: Image.asset(
+              child: Image.network(
                 imagePath,
                 fit: BoxFit.contain,
               ),

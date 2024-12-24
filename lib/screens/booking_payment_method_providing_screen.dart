@@ -3,11 +3,18 @@ import 'package:impeccablehome_customer/components/custom_back_button.dart';
 import 'package:impeccablehome_customer/components/custom_button.dart';
 import 'package:impeccablehome_customer/components/custom_text_input.dart';
 import 'package:impeccablehome_customer/components/smallProcessWidget.dart';
+import 'package:impeccablehome_customer/model/service_model.dart';
+import 'package:impeccablehome_customer/resources/booking_method.dart';
 import 'package:impeccablehome_customer/screens/booking_review_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
+import 'package:impeccablehome_customer/utils/utils.dart';
+import 'package:provider/provider.dart';
 
 class BookingPaymentMethodProvidingScreen extends StatefulWidget {
-  const BookingPaymentMethodProvidingScreen({super.key});
+  final bool isFromHome;
+  final ServiceModel serviceModel;
+  const BookingPaymentMethodProvidingScreen(
+      {super.key, required this.isFromHome, required this.serviceModel});
 
   @override
   State<BookingPaymentMethodProvidingScreen> createState() =>
@@ -22,6 +29,27 @@ class _BookingPaymentMethodProvidingScreenState
   final TextEditingController cardNumberController = TextEditingController();
   final TextEditingController cvvController = TextEditingController();
   String? selectedMethod; // Holds the currently selected payment method
+  @override
+  void initState() {
+    super.initState();
+
+    // Access the provider to initialize bookingModel
+    final bookingMethods = Provider.of<BookingMethods>(context, listen: false);
+
+    if (!widget.isFromHome) {
+      final tempBookingModel = bookingMethods.bookingModel;
+
+      setState(() {
+        // Initialize controllers with values from bookingModel
+
+        selectedMethod = tempBookingModel.paymentMethod;
+        cardHolderNameController.text = tempBookingModel.cardName;
+        cardNumberController.text = tempBookingModel.cardNumber;
+        cvvController.text = tempBookingModel.cvv;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -130,7 +158,7 @@ class _BookingPaymentMethodProvidingScreenState
 
                     if (selectedMethod == "Credit card")
                       Container(
-                        margin:  const EdgeInsets.only(top:16),
+                        margin: const EdgeInsets.only(top: 16),
                         decoration: BoxDecoration(
                           border: Border.all(
                             color: silverGrayColor, // Grey border
@@ -202,7 +230,7 @@ class _BookingPaymentMethodProvidingScreenState
               width: 24,
             ),
             Container(
-              width: screenWidth* (3/8),
+              width: screenWidth * (3 / 8),
               child: SmallProcessWidget(
                 currentProcess: 1,
                 numberOfProcesses: 3,
@@ -217,12 +245,13 @@ class _BookingPaymentMethodProvidingScreenState
               child: CustomButton(
                 title: "Next",
                 onTap: () {
-                  Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BookingReviewScreen(),
-                          ),
-                        );
+                  addPayment();
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => BookingReviewScreen(),
+                  //   ),
+                  // );
                 },
                 backgroundColor: neonGreenColor,
                 textColor: Colors.black,
@@ -235,5 +264,32 @@ class _BookingPaymentMethodProvidingScreenState
         ),
       ),
     );
+  }
+
+  Future<void> addPayment() async {
+    final bookingMethods = Provider.of<BookingMethods>(context, listen: false);
+    String cardHolderName = cardHolderNameController.text.trim();
+    String cardNumber = cardNumberController.text.trim();
+    String cvv = cvvController.text.trim();
+
+    // Validation checks
+    if (selectedMethod == null || selectedMethod!.isEmpty) {
+      showSnackBar(context, "Select method!");
+    } else if (selectedMethod == "Credit card" && cardHolderName.isEmpty) {
+      showSnackBar(context, "Add card holder name!");
+    } else if (selectedMethod == "Credit card" && cardNumber.isEmpty) {
+      showSnackBar(context, "Add card number!");
+    } else if (selectedMethod == "Credit card" && cvv.isEmpty) {
+      showSnackBar(context, "Add cvv!");
+    } else {
+      try {
+        // Call addBookingDetails from the provider
+        bookingMethods.addBookingPaymentMethod(context,widget.serviceModel, selectedMethod!,
+            cardHolderName, cardNumber, cvv, widget.isFromHome);
+      } catch (e) {
+        debugPrint('Error parsing dates or times: $e');
+        showSnackBar(context, "Invalid date or time format!");
+      }
+    }
   }
 }

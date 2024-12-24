@@ -28,14 +28,26 @@ class ServiceModel {
   }
 
   // Create an object from a map (useful for fetching data from a database)
+  // factory ServiceModel.fromMap(Map<String, dynamic> map) {
+  //   return ServiceModel(
+  //     serviceId: map['serviceId'] ?? '',
+  //     serviceName: map['serviceName'] ?? '',
+  //     serviceDescription: map['serviceDescription'] ?? '',
+  //     serviceBasePrice: (map['serviceBasePrice'] ?? 0).toDouble(),
+  //     imagePath: map['imagePath'] ?? '',
+  //     colorfulImagePath: map['colorfulImagePath'] ?? '',
+  //   );
+  // }
   factory ServiceModel.fromMap(Map<String, dynamic> map) {
-    return ServiceModel(
-      serviceId: map['serviceId'] ?? '',
-      serviceName: map['serviceName'] ?? '',
-      serviceDescription: map['serviceDescription'] ?? '',
-      serviceBasePrice: (map['serviceBasePrice'] ?? 0).toDouble(),
-      imagePath: map['imagePath'] ?? '',
-      colorfulImagePath: map['colorfulImagePath'] ?? '',
-    );
-  }
+  return ServiceModel(
+    serviceId: map['serviceId'] ?? '',
+    serviceName: map['serviceName'] ?? '',
+    serviceDescription: map['serviceDescription'] ?? '',
+    serviceBasePrice: map['serviceBasePrice'] is String
+        ? double.tryParse(map['serviceBasePrice']) ?? 0.0
+        : (map['serviceBasePrice'] ?? 0).toDouble(),
+    imagePath: map['imagePath'] ?? '',
+    colorfulImagePath: map['colorfulImagePath'] ?? '',
+  );
+}
 }
