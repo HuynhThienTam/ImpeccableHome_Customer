@@ -385,6 +385,6 @@ class _BookingReviewScreenState extends State<BookingReviewScreen> {
 
   Future<void> upLoadBooking() async {
     final bookingMethods = Provider.of<BookingMethods>(context, listen: false);
-    bookingMethods.uploadBookingToFirebase(context);
+    bookingMethods.uploadBookingToFirebase(context, widget.serviceModel);
   }
 }

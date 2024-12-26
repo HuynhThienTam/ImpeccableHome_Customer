@@ -174,7 +174,7 @@ class BookingMethods extends ChangeNotifier {
     }
   }
 
-  Future<void> uploadBookingToFirebase(BuildContext context) async {
+  Future<void> uploadBookingToFirebase(BuildContext context,ServiceModel serviceModel,) async {
     try {
       // Convert the BookingModel to a map
       Map<String, dynamic> bookingData = bookingModel.toMap();
@@ -185,6 +185,19 @@ class BookingMethods extends ChangeNotifier {
           .add(bookingData);
       // Use the document ID as the bookingNumber and update the document
       await docRef.update({'bookingNumber': docRef.id});
+      // Add a notification to the helper's notifications subcollection
+    await FirebaseFirestore.instance
+        .collection('helpers')
+        .doc(bookingModel.helperUid)
+        .collection('notifications')
+        .add({
+      'title': 'New Booking Assigned',
+      'image': serviceModel.colorfulImagePath,
+      'content': 'You have a new booking on ${bookingModel.workingDay}. Please check out and confirm soon!',
+      'createdAt': DateTime.now(),
+      'type':"Booking",
+      'isRead': false,
+    });
       debugPrint('Booking uploaded successfully with ID: ${docRef.id}');
       Navigator.pushReplacement(
         context,
