@@ -4,8 +4,12 @@ import 'package:impeccablehome_customer/components/custom_back_button.dart';
 import 'package:impeccablehome_customer/components/custom_button.dart';
 import 'package:impeccablehome_customer/components/process_widget.dart';
 import 'package:impeccablehome_customer/model/booking_model.dart';
+import 'package:impeccablehome_customer/model/helper_model.dart';
+import 'package:impeccablehome_customer/resources/booking_method.dart';
+import 'package:impeccablehome_customer/resources/helper_service.dart';
 import 'package:impeccablehome_customer/screens/add_review_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
+import 'package:provider/provider.dart';
 
 class BookingDetailsScreen extends StatefulWidget {
   final BookingModel booking;
@@ -16,9 +20,42 @@ class BookingDetailsScreen extends StatefulWidget {
 }
 
 class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
+  late int statusNumber;
+  HelperModel? helperModel;
+  bool isLoading = true; // State to track
+  final HelperService helperService = HelperService();
+  void initState() {
+    super.initState();
+    // Initialize statusNumber with the booking status when the widget is created
+    _fetchHelper();
+    statusNumber = int.parse(widget.booking.status);
+  }
+
+  Future<void> _fetchHelper() async {
+    try {
+      final fetchedHelper =
+          await helperService.fetchHelperDetails(widget.booking.helperUid);
+
+      if (fetchedHelper != null) {
+        setState(() {
+          helperModel = fetchedHelper;
+        });
+      }
+    } catch (e) {
+      // Handle errors (optional)
+      print('Error fetching helper: $e');
+    } finally {
+      setState(() {
+        isLoading = false; // Stop loading once data is fetched
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final bookingMethods = Provider.of<BookingMethods>(context);
     final screenWidth = MediaQuery.of(context).size.width;
+
     int statusNumber = int.parse(widget.booking.status);
     return Scaffold(
       backgroundColor: Colors.white,
@@ -36,10 +73,10 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                   children: [
                     CustomBackButton(color: Colors.blue),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * (1 / 6),
+                      width: MediaQuery.of(context).size.width * (1 / 12),
                     ),
                     Text(
-                      "Booking no #${widget.booking.bookingNumber}",
+                      "Booking no \n#${widget.booking.bookingNumber}",
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -174,9 +211,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                         ),
                       ),
                       Text(
-                        widget.booking.location != ""
-                            ? widget.booking.location
-                            : "No note added",
+                        widget.booking.note,
                         style: TextStyle(
                             color: oceanBlueColor,
                             fontSize: 16,
@@ -193,13 +228,15 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                           color: Colors.black,
                         ),
                       ),
-                      Text(
-                        widget.booking.helperName,
-                        style: TextStyle(
-                            color: oceanBlueColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400),
-                      ),
+                      isLoading
+                          ? Container()
+                          : Text(
+                              "${helperModel!.firstName} ${helperModel!.lastName}",
+                              style: TextStyle(
+                                  color: oceanBlueColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400),
+                            ),
                       SizedBox(
                         height: 20,
                       ),
@@ -305,38 +342,77 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                         ),
                       ],
                     )
-                  : Column(
-                      children: [
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  : (statusNumber == -1 || statusNumber == -2)
+                      ? Column(
                           children: [
-                            Container(
-                              height: 48,
-                              width: 130,
-                              child: CustomButton(
-                                title: "Cancel",
-                                onTap: () {},
-                                textColor: Colors.white,
-                                backgroundColor: silverGrayColor,
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: screenWidth / 8),
+                              child: Container(
+                                height: 48,
+                                width: double.infinity,
+                                child: CustomButton(
+                                  title: "Report",
+                                  onTap: () {},
+                                  textColor: Colors.white,
+                                  backgroundColor: crimsonRedColor,
+                                ),
                               ),
                             ),
-                            Container(
-                              height: 48,
-                              width: 130,
-                              child: CustomButton(
-                                title: "Report",
-                                onTap: () {},
-                                textColor: Colors.white,
-                                backgroundColor: crimsonRedColor,
-                              ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Container(
+                                  height: 48,
+                                  width: 130,
+                                  child: CustomButton(
+                                    title: "Cancel",
+                                    onTap: () async {
+                                      int nextStatus =
+                                          -1; // New status for "Cancel"
+                                      await bookingMethods.updateBookingStatus(
+                                        widget.booking.bookingNumber,
+                                        nextStatus.toString(),
+                                      );
+
+                                      // Update the local BookingModel instance
+                                      setState(() {
+                                        statusNumber = nextStatus;
+                                        widget.booking.status =
+                                            nextStatus.toString();
+                                      });
+                                    },
+                                    textColor: Colors.white,
+                                    backgroundColor: silverGrayColor,
+                                  ),
+                                ),
+                                Container(
+                                  height: 48,
+                                  width: 130,
+                                  child: CustomButton(
+                                    title: "Report",
+                                    onTap: () {},
+                                    textColor: Colors.white,
+                                    backgroundColor: crimsonRedColor,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
               const SizedBox(height: 25),
               SizedBox(
                 height: 25,

@@ -49,7 +49,7 @@ class BookingMethods extends ChangeNotifier {
           cardName: "",
           cardNumber: "",
           cvv: "",
-          status: "");
+          status: "0");
 
       Navigator.push(
           context,
@@ -124,55 +124,63 @@ class BookingMethods extends ChangeNotifier {
     }
   }
 
-  Future<List<BookingModel>> fetchBookings() async {
-    try {
-      // Fetch bookings from Firestore
-      final bookingsSnapshot =
-          await FirebaseFirestore.instance.collection('bookings').get();
+//   Stream<List<BookingModel>> getBookingsStream(String helperId) async* {
+//   // Listen to booking snapshots
+//   await for (var snapshot in FirebaseFirestore.instance
+//       .collection('bookings')
+//       .where('helperUid', isEqualTo: helperId)
+//       .snapshots()) {
+//     // Fetch all bookings with additional details from users and helpers collections
+//     var bookings = await Future.wait(snapshot.docs.map((doc) async {
+//       final data = doc.data() as Map<String, dynamic>;
 
-      final List<BookingModel> bookings = [];
-      for (var doc in bookingsSnapshot.docs) {
-        final data = doc.data();
+//       // Fetch customer details based on customerUid
+//       String customerName = 'Unknown';
+//       if (data['customerUid'] != null) {
+//         final customerSnapshot = await FirebaseFirestore.instance
+//             .collection('users')
+//             .doc(data['customerUid'])
+//             .get();
+//         customerName = customerSnapshot.data()?['name'] ?? 'Unknown';
+//       }
 
-        // Fetch customer and helper details based on UIDs
-        final customerSnapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(data['customerUid'])
-            .get();
+//       // Fetch helper details based on helperUid (optional, if needed)
+//       // String helperName = 'Unknown';
+//       // if (data['helperUid'] != null) {
+//       //   final helperSnapshot = await FirebaseFirestore.instance
+//       //       .collection('helpers')
+//       //       .doc(data['helperUid'])
+//       //       .get();
+//       //   helperName = helperSnapshot.data()?['name'] ?? 'Unknown';
+//       // }
 
-        final helperSnapshot = await FirebaseFirestore.instance
-            .collection('helpers')
-            .doc(data['helperUid'])
-            .get();
+//       // Map to BookingModel
+//       return BookingModel(
+//         bookingNumber: data['bookingNumber'],
+//         serviceType: data['serviceType'],
+//         customerUid: data['customerUid'],
+//         customerName: customerName,
+//         helperUid: data['helperUid'],
+//         //helperName: helperName,
+//         helperName: '',
+//         workingDay: (data['workingDay'] as Timestamp).toDate(),
+//         startTime: (data['startTime'] as Timestamp).toDate(),
+//         finishedTime: (data['finishedTime'] as Timestamp).toDate(),
+//         location: data['location'],
+//         province: data['province'],
+//         note: data['note'],
+//         paymentMethod: data['paymentMethod'],
+//         cardName: data['cardName'],
+//         cardNumber: data['cardNumber'],
+//         cvv: data['cvv'],
+//         status: data['status'],
+//       );
+//     }).toList());
 
-        // Map the BookingModel
-        bookings.add(BookingModel(
-          bookingNumber: data['bookingNumber'],
-          serviceType: data['serviceType'],
-          customerUid: data['customerUid'],
-          customerName: customerSnapshot.data()?['name'] ?? 'Unknown',
-          helperUid: data['helperUid'],
-          helperName: helperSnapshot.data()?['name'] ?? 'Unknown',
-          workingDay: (data['workingDay'] as Timestamp).toDate(),
-          startTime: (data['startTime'] as Timestamp).toDate(),
-          finishedTime: (data['finishedTime'] as Timestamp).toDate(),
-          location: data['location'],
-          province: data['province'],
-          note: data['note'],
-          paymentMethod: data['paymentMethod'],
-          cardName: data['cardName'],
-          cardNumber: data['cardNumber'],
-          cvv: data['cvv'],
-          status: data['status'],
-        ));
-      }
-
-      return bookings;
-    } catch (e) {
-      print('Error fetching bookings: $e');
-      return [];
-    }
-  }
+//     // Yield the updated list of bookings
+//     yield bookings;
+//   }
+// }
 
   Future<void> uploadBookingToFirebase(BuildContext context,ServiceModel serviceModel,) async {
     try {
@@ -211,4 +219,27 @@ class BookingMethods extends ChangeNotifier {
       showSnackBar(context, "Booking fails");
     }
   }
+
+   Stream<List<BookingModel>> getBookingsStream(String userId) {
+  return FirebaseFirestore.instance
+      .collection('bookings')
+      .where('customerUid', isEqualTo: userId)
+      .snapshots()
+      .map((snapshot) => snapshot.docs.map((doc) {
+            return BookingModel.fromMap(doc.data() as Map<String, dynamic>);
+          }).toList());
 }
+  Future<void> updateBookingStatus(String bookingId, String newStatus) async {
+    try {
+      // Update the status field in the booking document
+      await cloudFirestoreClass.firebaseFirestore.collection('bookings').doc(bookingId).update({
+        'status': newStatus,
+      });
+
+      debugPrint('Booking status updated to $newStatus for booking ID: $bookingId');
+    } catch (e) {
+      debugPrint('Error updating booking status: $e');
+    }
+  }
+}
+

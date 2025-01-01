@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -5,8 +6,11 @@ import 'package:impeccablehome_customer/components/booking_widget.dart';
 import 'package:impeccablehome_customer/components/completed_booking_widget.dart';
 import 'package:impeccablehome_customer/components/custom_back_button.dart';
 import 'package:impeccablehome_customer/components/process_widget.dart';
+import 'package:impeccablehome_customer/model/booking_model.dart';
+import 'package:impeccablehome_customer/resources/booking_method.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 import 'package:impeccablehome_customer/utils/mock.dart';
+import 'package:provider/provider.dart';
 
 class BookingsScreen extends StatefulWidget {
   
@@ -17,14 +21,38 @@ class BookingsScreen extends StatefulWidget {
 }
 
 class _BookingsScreenState extends State<BookingsScreen> {
+  final currentuser = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
+    final bookingMethods = Provider.of<BookingMethods>(context, listen: false);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: StreamBuilder<List<BookingModel>>(
+        stream: bookingMethods.getBookingsStream(currentuser!.uid),
+        builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        // Divide bookings into three lists based on their status
+        final cancelBookings = snapshot.data!
+            .where((booking) =>
+                booking.status == "-1" || booking.status == "-2")
+            .toList();
+        final ongoingBookings = snapshot.data!
+            .where((booking) =>
+                booking.status == "0" ||
+                booking.status == "1" ||
+                booking.status == "2")
+            .toList();
+        final completedBookings = snapshot.data!
+            .where((booking) => booking.status == "3")
+            .toList();
+
+        return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -66,10 +94,10 @@ class _BookingsScreenState extends State<BookingsScreen> {
               ),
               SingleChildScrollView(
                 child: Column(
-                  children: List.generate(bookings.length, (index) {
+                  children: List.generate(ongoingBookings.length, (index) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: BookingWidget(booking: bookings[index]),
+                      child: BookingWidget(booking: ongoingBookings[index]),
                     );
                   }),
                 ),
@@ -116,13 +144,13 @@ class _BookingsScreenState extends State<BookingsScreen> {
                               ),
                               Column(
                                 children: List.generate(
-                                  bookings.length,
+                                  completedBookings.length,
                                   (index) {
                                     return Padding(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 8.0),
                                       child: CompletedBookingWidget(
-                                        booking: bookings[index],
+                                        booking: completedBookings[index],
                                       ),
                                     );
                                   },
@@ -141,13 +169,13 @@ class _BookingsScreenState extends State<BookingsScreen> {
                               ),
                               Column(
                                 children: List.generate(
-                                  bookings.length,
+                                  cancelBookings.length,
                                   (index) {
                                     return Padding(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 8.0),
                                       child: CompletedBookingWidget(
-                                        booking: bookings[index],
+                                        booking: cancelBookings[index],
                                       ),
                                     );
                                   },
@@ -166,7 +194,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
               ),
             ],
           ),
-        ),
+        );},),
       ),
     );
   }
