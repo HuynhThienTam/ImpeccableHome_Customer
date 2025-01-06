@@ -206,12 +206,18 @@ class BookingMethods extends ChangeNotifier {
       'type':"Booking",
       'isRead': false,
     });
+    await FirebaseFirestore.instance.collection('contacts').add({
+      'userId': bookingModel.customerUid,
+      'helperId': bookingModel.helperUid,
+      'lastMessage': '',
+      'unreadCount': 0,
+    });
       debugPrint('Booking uploaded successfully with ID: ${docRef.id}');
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) =>
-              BookingSuccessScreen(), // Replace with your actual SuccessScreen widget
+              BookingSuccessScreen(), 
         ),
       );
     } catch (e) {

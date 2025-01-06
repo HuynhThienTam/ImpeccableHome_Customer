@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:impeccablehome_customer/model/helper_model.dart';
@@ -67,9 +68,19 @@ class HelperCardWidget extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               // Avatar
-              CircleAvatar(
-                backgroundImage: NetworkImage(helper.profilePic),
-                radius: 40,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HelperProfileScreen(helper: helper),
+                    ),
+                  );
+                },
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(helper.profilePic),
+                  radius: 40,
+                ),
               ),
               const SizedBox(height: 8),
               // Name
@@ -107,12 +118,14 @@ class HelperCardWidget extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 18),
                 child: ElevatedButton(
                   onPressed: () {
-                     Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HelperProfileScreen(helper: helper,),
-                          ),
-                        );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HelperProfileScreen(
+                          helper: helper,
+                        ),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: skyBlueColor,

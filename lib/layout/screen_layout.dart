@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:impeccablehome_customer/components/custom_drawer.dart';
 import 'package:impeccablehome_customer/screens/bookings_screen.dart';
+import 'package:impeccablehome_customer/screens/chat_screen.dart';
 import 'package:impeccablehome_customer/screens/home_screen.dart';
 import 'package:impeccablehome_customer/screens/notification_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
@@ -147,7 +148,7 @@ class _ScreenLayoutState extends State<ScreenLayout> {
         },
       ),
       BookingsScreen(),
-      Center(child: Text('Chat Screen')),
+      ChatScreen(),
       NotificationScreen(),
     ];
 

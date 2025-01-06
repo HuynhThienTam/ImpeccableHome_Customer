@@ -69,7 +69,7 @@ class _HelperProfileScreenState extends State<HelperProfileScreen> {
               ),
               Padding(
                 padding: EdgeInsets.only(
-                    left: screenWidth / 8, right: screenWidth / 20),
+                    left: screenWidth / 12, right: screenWidth / 20),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
