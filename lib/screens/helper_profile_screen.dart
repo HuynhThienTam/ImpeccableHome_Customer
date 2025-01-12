@@ -8,6 +8,8 @@ import 'package:impeccablehome_customer/components/review_widget.dart';
 import 'package:impeccablehome_customer/components/stars_widget.dart';
 import 'package:impeccablehome_customer/components/weekly_working_time_widget.dart';
 import 'package:impeccablehome_customer/model/helper_model.dart';
+import 'package:impeccablehome_customer/model/review_model.dart';
+import 'package:impeccablehome_customer/resources/review_services.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 import 'package:impeccablehome_customer/utils/mock.dart';
 
@@ -20,6 +22,29 @@ class HelperProfileScreen extends StatefulWidget {
 }
 
 class _HelperProfileScreenState extends State<HelperProfileScreen> {
+  final ReviewService reviewService = ReviewService();
+  bool isReviewLoading = true;
+  List<ReviewModel> reviewList = [];
+  @override
+  void initState() {
+    super.initState();
+    _loadReviews();
+  }
+
+  void _loadReviews() async {
+    try {
+      final reviews =
+          await reviewService.getReviewsByHelperId(widget.helper.helperUid);
+      setState(() {
+        reviewList = reviews;
+        isReviewLoading = false;
+      });
+    } catch (error) {
+      // Handle error (optional: show a message or retry logic)
+      print('Error loading reviews: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -150,31 +175,35 @@ class _HelperProfileScreenState extends State<HelperProfileScreen> {
               SizedBox(
                 height: 25,
               ),
-              Column(
-                children: mockReviews
-                    .map((review) => Padding(
-                          padding: EdgeInsets.only(
-                            top: screenWidth / 36,
-                            left: screenWidth / 13,
-                            right: screenWidth / 10,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ReviewWidget(review: review),
-                              SizedBox(
-                                height: screenWidth / 36,
-                              ),
-                              Divider(
-                                // Divider between each widget
-                                color: orangeColor, // Customize divider color
-                                thickness: 1.0, // Customize divider thickness
-                              ),
-                            ],
-                          ),
-                        ))
-                    .toList(),
-              ),
+              isReviewLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : Column(
+                      children: reviewList
+                          .map((review) => Padding(
+                                padding: EdgeInsets.only(
+                                  top: screenWidth / 36,
+                                  left: screenWidth / 13,
+                                  right: screenWidth / 10,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ReviewWidget(review: review),
+                                    SizedBox(
+                                      height: screenWidth / 36,
+                                    ),
+                                    Divider(
+                                      // Divider between each widget
+                                      color:
+                                          orangeColor, // Customize divider color
+                                      thickness:
+                                          1.0, // Customize divider thickness
+                                    ),
+                                  ],
+                                ),
+                              ))
+                          .toList(),
+                    ),
               SizedBox(
                 height: 50,
               ),
@@ -206,7 +235,7 @@ class _HelperProfileScreenState extends State<HelperProfileScreen> {
           children: [
             Container(
               height: 48,
-              width: screenWidth*(3/4),
+              width: screenWidth * (3 / 4),
               child: CustomButton(
                 title: "Choose her now",
                 onTap: () {},

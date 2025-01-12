@@ -318,7 +318,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              AddReviewScreen(),
+                                              AddReviewScreen(userId: widget.booking.customerUid,helperId: widget.booking.helperUid,),
                                         ),
                                       );
                                     },

@@ -29,7 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
             children: [
               Padding(
                 padding: EdgeInsets.only(
-                  top: screenWidth * (1 / 12),
+                  top: screenWidth * (1 / 6),
                   left: screenWidth * (1 / 13),
                 ),
                 child: Row(
@@ -90,6 +90,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                         builder: (context) => ChatroomScreen(
                                           userId: currentuser!.uid,
                                           helperId: contact['helperId'],
+                                          contactId: contact.id, // Pass the document ID
+
                                         ),
                                       ),
                                     );

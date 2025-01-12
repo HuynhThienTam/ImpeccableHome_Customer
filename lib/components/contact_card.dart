@@ -54,7 +54,7 @@ class _ContactCardState extends State<ContactCard> {
       }
     } catch (e) {
       print("Invalid date format: $lastLogOutAt");
-      return "Invalid date"; // Fallback for invalid format
+      return ""; // Fallback for invalid format
     }
   }
 

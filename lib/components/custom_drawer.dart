@@ -1,18 +1,26 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:impeccablehome_customer/model/user_model.dart';
+import 'package:impeccablehome_customer/resources/user_services.dart';
 import 'package:impeccablehome_customer/screens/profile_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 
-class CustomDrawer extends StatelessWidget {
-  final String username;
-  final String avatarUrl;
-
+class CustomDrawer extends StatefulWidget {
+  final String userName;
+  final String profilePic;
   const CustomDrawer({
+    required this.profilePic,
+    required this.userName,
     Key? key,
-    required this.username,
-    required this.avatarUrl,
   }) : super(key: key);
 
+  @override
+  State<CustomDrawer> createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
+  
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -23,7 +31,7 @@ class CustomDrawer extends StatelessWidget {
           bottomLeft: Radius.circular(22),
         ),
       ),
-      child: Column(
+      child:  Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Drawer Header
@@ -41,11 +49,11 @@ class CustomDrawer extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 35,
-                    backgroundImage: NetworkImage(avatarUrl),
+                    backgroundImage: NetworkImage(widget.profilePic),
                   ),
                   SizedBox(width: 12),
                   Text(
-                    username,
+                    widget.userName,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
@@ -70,12 +78,12 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   title: "Profile",
                   onTap: () {
-                     Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProfileScreen(),
-                          ),
-                        );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfileScreen(),
+                      ),
+                    );
                   },
                 ),
                 _drawerOption(
@@ -141,8 +149,8 @@ class CustomDrawer extends StatelessWidget {
       required String title,
       required VoidCallback onTap}) {
     return Padding(
-      padding:
-          const EdgeInsets.only(top: 12.0, left: 40, right: 14), // Add vertical padding
+      padding: const EdgeInsets.only(
+          top: 12.0, left: 40, right: 14), // Add vertical padding
       child: Column(
         children: [
           ListTile(

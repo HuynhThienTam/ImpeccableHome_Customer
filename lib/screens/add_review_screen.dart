@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -9,12 +10,21 @@ import 'package:impeccablehome_customer/components/custom_back_button.dart';
 import 'package:impeccablehome_customer/components/custom_button.dart';
 import 'package:impeccablehome_customer/components/dash_border_painter.dart';
 import 'package:impeccablehome_customer/components/ratings_widget.dart';
+import 'package:impeccablehome_customer/model/helper_model.dart';
+import 'package:impeccablehome_customer/model/review_model.dart';
+import 'package:impeccablehome_customer/model/user_model.dart';
+import 'package:impeccablehome_customer/resources/helper_service.dart';
+import 'package:impeccablehome_customer/resources/review_services.dart';
+import 'package:impeccablehome_customer/resources/user_services.dart';
 import 'package:impeccablehome_customer/screens/report_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 import 'package:impeccablehome_customer/utils/mock.dart';
 
 class AddReviewScreen extends StatefulWidget {
-  const AddReviewScreen({super.key});
+  final String userId;
+  final String helperId;
+  const AddReviewScreen(
+      {super.key, required this.helperId, required this.userId});
 
   @override
   State<AddReviewScreen> createState() => _AddReviewScreenState();
@@ -71,6 +81,100 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
     });
   }
 
+  bool isUploading = false;
+  final ReviewService _reviewService = ReviewService();
+  Future<void> _uploadReview() async {
+    if (isUploading) return;
+
+    final reviewContent = reviewContentController.text.trim();
+    final ratings = ratingsController.value;
+
+    setState(() {
+      isUploading = true;
+    });
+
+    try {
+      // Upload images and get their URLs
+      List<String> imageUrls = [];
+      for (File image in _selectedImages) {
+        String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+        Reference ref =
+            FirebaseStorage.instance.ref().child('review_images/$fileName');
+        await ref.putFile(image);
+        String imageUrl = await ref.getDownloadURL();
+        imageUrls.add(imageUrl);
+      }
+
+      // Upload review to Firestore
+      await _reviewService.uploadReview(ReviewModel(
+          userId: widget.userId,
+          helperId: widget.helperId,
+          ratings: ratings.toDouble(),
+          reviewContent: reviewContent,
+          reviewPics: imageUrls));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Review uploaded successfully!')),
+      );
+      Navigator.pop(context); // Go back to the previous screen
+    } catch (e) {
+      print('Error uploading review: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to upload review')),
+      );
+    } finally {
+      setState(() {
+        isUploading = false;
+      });
+    }
+  }
+
+  bool isLoading = true; // State to track loading
+  final UserService userService = UserService();
+  UserModel? user;
+  final HelperService helperService = HelperService();
+  HelperModel? helper;
+  @override
+  void initState() {
+    super.initState();
+    _fetchUser(); // Fetch user details when the widget is initialized
+    _fetchHelper();
+    setState(() {
+      isLoading = false; // Stop loading once data is fetched
+    });
+  }
+
+  Future<void> _fetchUser() async {
+    try {
+      final fetchedUser = await userService.fetchUserDetails(widget.userId);
+
+      if (fetchedUser != null) {
+        setState(() {
+          user = fetchedUser;
+        });
+      }
+    } catch (e) {
+      // Handle errors (optional)
+      print('Error fetching user: $e');
+    } finally {}
+  }
+
+  Future<void> _fetchHelper() async {
+    try {
+      final fetchedHelper =
+          await helperService.fetchHelperDetails(widget.helperId);
+
+      if (fetchedHelper != null) {
+        setState(() {
+          helper = fetchedHelper;
+        });
+      }
+    } catch (e) {
+      // Handle errors (optional)
+      print('Error fetching helper: $e');
+    } finally {}
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -109,7 +213,9 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: screenWidth / 8),
                 child: Text(
-                  "What is your thought on ${helpers[0].lastName}'s service?",
+                  isLoading
+                      ? ""
+                      : "What is your thought on ${helper!.firstName} ${helper!.lastName}'s service?",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   textAlign: TextAlign.center,
                 ),
@@ -119,7 +225,9 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
               ),
               CircleAvatar(
                 radius: avatarSize / 3,
-                backgroundImage: NetworkImage(helpers[0].profilePic),
+                backgroundImage: NetworkImage(isLoading
+                    ? "https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI="
+                    : helper!.profilePic),
               ),
               SizedBox(
                 height: 25,
@@ -275,53 +383,60 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
                 ],
               ),
               SizedBox(
-                height:15,
+                height: 15,
               ),
-               Text(
+              Text(
                 "Selected Images (${_selectedImages.length}/3):",
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
               ),
-               SizedBox(
-                height:15,
+              SizedBox(
+                height: 15,
               ),
-              RichText(text: TextSpan(
-                text: "Have a problem with our service? ",
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black,
-                  height: 1.5,
-                ),
-                children: [
-                  TextSpan(
-                    text: "Let us know",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: skyBlueColor,
-                      decoration: TextDecoration.underline,
-                      height: 1.5,
-                    ),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ReportScreen(),
-                          ),
-                        );
-                      },
+              RichText(
+                text: TextSpan(
+                  text: "Have a problem with our service? ",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black,
+                    height: 1.5,
                   ),
-                ],
-              ),),
+                  children: [
+                    TextSpan(
+                      text: "Let us know",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: skyBlueColor,
+                        decoration: TextDecoration.underline,
+                        height: 1.5,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ReportScreen(),
+                            ),
+                          );
+                        },
+                    ),
+                  ],
+                ),
+              ),
               SizedBox(
                 height: 35,
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth/8),
-                child: CustomButton(title: "Send your review", onTap: (){}, textColor: Colors.white,backgroundColor: oceanBlueColor,),
+                padding: EdgeInsets.symmetric(horizontal: screenWidth / 8),
+                child: CustomButton(
+                  title: "Send your review",
+                  onTap: _uploadReview,
+                  textColor: Colors.white,
+                  backgroundColor: oceanBlueColor,
+                ),
               ),
-               SizedBox(
+              SizedBox(
                 height: 50,
               ),
             ],

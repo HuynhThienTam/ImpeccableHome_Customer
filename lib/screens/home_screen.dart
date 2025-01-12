@@ -7,9 +7,11 @@ import 'package:impeccablehome_customer/components/custom_drawer.dart';
 import 'package:impeccablehome_customer/components/gradient_container.dart';
 import 'package:impeccablehome_customer/components/search_bar_widget.dart';
 import 'package:impeccablehome_customer/model/service_model.dart';
+import 'package:impeccablehome_customer/model/user_model.dart';
 import 'package:impeccablehome_customer/resources/authentication_method.dart';
 import 'package:impeccablehome_customer/resources/booking_method.dart';
 import 'package:impeccablehome_customer/resources/cloud_firestore_methods.dart';
+import 'package:impeccablehome_customer/resources/user_services.dart';
 import 'package:impeccablehome_customer/screens/booking_details_providing_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 import 'package:impeccablehome_customer/utils/mock.dart';
@@ -17,7 +19,8 @@ import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback openEndDrawer;
-  const HomeScreen({super.key, required this.openEndDrawer});
+  final String userName;
+  const HomeScreen({super.key, required this.openEndDrawer, required this.userName});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -26,12 +29,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final CloudFirestoreClass cloudFirestoreClass = CloudFirestoreClass();
   List<ServiceModel> servicesList = []; // Declare the list of services
-  bool isLoading = true; // Track loading state
   final currentuser = FirebaseAuth.instance.currentUser;
+  bool isLoading=true;
   @override
   void initState() {
     super.initState();
     fetchServiceData();
+    setState(() {
+        isLoading = false; // Stop loading once data is fetched
+      });
   }
 
   Future<void> fetchServiceData() async {
@@ -40,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
           await cloudFirestoreClass.fetchServices(); // Fetch services
       setState(() {
         servicesList = fetchedServices; // Update the list
-        isLoading = false; // Set loading to false
       });
     } catch (e) {
       print('Error fetching services: $e');
@@ -56,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(
+          child:isLoading?Center(child: CircularProgressIndicator(),): Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
@@ -80,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Hi John,",
+                                      "Hi ${widget.userName},",
                                       style: TextStyle(
                                           fontSize: 32,
                                           fontWeight: FontWeight.w500,
