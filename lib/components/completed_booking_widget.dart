@@ -83,7 +83,7 @@ class _CompletedBookingWidgetState extends State<CompletedBookingWidget> {
               children: [
                 Container(
                   height: 48,
-                  width: 130,
+                  width: 110,
                   child: CustomButton(
                     title: "View",
                     onTap: () {
@@ -100,7 +100,7 @@ class _CompletedBookingWidgetState extends State<CompletedBookingWidget> {
                 ),
                 Container(
                   height: 48,
-                  width: 130,
+                  width: 110,
                   child: CustomButton(
                     title: "Book again",
                     onTap: () {},

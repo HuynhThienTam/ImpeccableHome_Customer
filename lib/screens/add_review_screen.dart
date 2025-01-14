@@ -19,6 +19,7 @@ import 'package:impeccablehome_customer/resources/user_services.dart';
 import 'package:impeccablehome_customer/screens/report_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
 import 'package:impeccablehome_customer/utils/mock.dart';
+import 'package:impeccablehome_customer/utils/utils.dart';
 
 class AddReviewScreen extends StatefulWidget {
   final String userId;
@@ -113,9 +114,7 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
           reviewContent: reviewContent,
           reviewPics: imageUrls));
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Review uploaded successfully!')),
-      );
+      showSnackBar(context, 'Review added successfully!');
       Navigator.pop(context); // Go back to the previous screen
     } catch (e) {
       print('Error uploading review: $e');
@@ -295,7 +294,7 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Wrap(
-                    spacing: 16.0,
+                    spacing: 14.0,
                     runSpacing: 8.0,
                     children: [
                       ..._selectedImages.asMap().entries.map((entry) {

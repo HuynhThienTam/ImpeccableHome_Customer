@@ -160,9 +160,9 @@ class _ContactCardState extends State<ContactCard> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                              helper!.lastLogOutAt == ""
+                              helper!.status == "onl"
                                   ? "Online"
-                                  : formatLastActive(helper!.lastLogOutAt),
+                                  : "${formatLastActive(helper!.lastLogOutAt)}",
                               style: TextStyle(
                                   fontSize: 12, color: charcoalGrayColor)),
                           SizedBox(height: 4),

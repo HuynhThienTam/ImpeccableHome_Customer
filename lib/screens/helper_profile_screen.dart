@@ -94,7 +94,7 @@ class _HelperProfileScreenState extends State<HelperProfileScreen> {
               ),
               Padding(
                 padding: EdgeInsets.only(
-                    left: screenWidth / 12, right: screenWidth / 20),
+                    left: screenWidth / 14, right: screenWidth / 20),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -143,7 +143,7 @@ class _HelperProfileScreenState extends State<HelperProfileScreen> {
                         ),
                         Padding(
                           padding: EdgeInsets.only(
-                            left: screenWidth / 8,
+                            left: screenWidth / 12,
                           ),
                           child: WeeklyWorkingTimeWidget(
                               workingTime: helper1WorkingTimes),

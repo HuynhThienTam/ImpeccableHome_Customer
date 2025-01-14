@@ -24,7 +24,7 @@ class HelperService {
           status: data['status'] ?? '',
           profilePic: data['profilePic'] ?? '',
           isApproved: data['isApproved'] ?? '',
-          ratings: (data['ratings'] ?? 0).toDouble(),
+          ratings: double.tryParse(data['ratings']?.toString() ?? '0.0') ?? 0.0,
           gender: data['gender'] ?? '',
           dateOfBirth: data['dateOfBirth'] ?? '',
           createdAt: '',
@@ -55,7 +55,11 @@ class HelperService {
           .where('province', isEqualTo: province)
           .where('serviceType', isEqualTo: serviceType)
           .get();
-
+      if (querySnapshot.docs.isEmpty) {
+        debugPrint(
+            'No helpers found for province: $province and serviceType: $serviceType');
+        return [];
+      }
       return querySnapshot.docs.map((doc) {
         final data = doc.data();
         return HelperModel(
@@ -70,7 +74,7 @@ class HelperService {
           status: data['status'] ?? '',
           profilePic: data['profilePic'] ?? '',
           isApproved: data['isApproved'] ?? '',
-          ratings: (data['ratings'] ?? 0).toDouble(),
+          ratings: double.tryParse(data['ratings']?.toString() ?? '0.0') ?? 0.0,
           gender: data['gender'] ?? '',
           dateOfBirth: data['dateOfBirth'] ?? '',
           createdAt: '',

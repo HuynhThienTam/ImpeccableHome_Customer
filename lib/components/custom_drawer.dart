@@ -2,9 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:impeccablehome_customer/model/user_model.dart';
+import 'package:impeccablehome_customer/resources/authentication_method.dart';
 import 'package:impeccablehome_customer/resources/user_services.dart';
 import 'package:impeccablehome_customer/screens/profile_screen.dart';
 import 'package:impeccablehome_customer/utils/color_themes.dart';
+import 'package:provider/provider.dart';
 
 class CustomDrawer extends StatefulWidget {
   final String userName;
@@ -134,7 +136,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     height: 24,
                   ),
                   title: "Log out",
-                  onTap: () {},
+                  onTap: () {
+                    signOut();
+                  },
                 ),
               ],
             ),
@@ -173,4 +177,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
       ),
     );
   }
+  void signOut() {
+    final authMethods =
+        Provider.of<AuthenticationMethods>(context, listen: false);
+      authMethods.userSignOut();
+    }
+  
 }

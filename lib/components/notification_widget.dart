@@ -63,7 +63,7 @@ class NotificationWidget extends StatelessWidget {
                 children: [
                   // Title
                   Padding(
-                    padding: EdgeInsets.only(right: 15.0),
+                    padding: EdgeInsets.only(right: 0),
                     child: Text(
                       notification.title,
                       style: TextStyle(
